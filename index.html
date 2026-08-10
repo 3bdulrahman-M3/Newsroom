@@ -39,6 +39,20 @@
     .nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
     .nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:color .2s;}
     .nav-links a:hover{color:var(--white);}
+    .nav-right-box{display:flex;align-items:center;gap:12px;}
+    .hassan-nav-link{
+      color:var(--red);
+      text-decoration:none;
+      font-size:12px;
+      font-weight:600;
+      opacity:.85;
+      letter-spacing:.5px;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:4px 8px;;
+      transition:all .2s;
+    }
     .nav-cta{display:flex;align-items:center;gap:16px;}
     .mob-drawer{
       display: none;
@@ -151,8 +165,9 @@
       nav{padding:14px 16px;flex-wrap:nowrap;}
       nav.scrolled{padding:11px 16px;}
 
-      /* Hide desktop items, show hamburger */
+      /* Hide desktop nav links & desktop cta buttons on mobile */
       .nav-links{display:none;}
+      .nav-cta{display:none;}
       .nav-toggle{display:flex;}
 
       /* Mobile drawer — slides down from nav */
@@ -191,46 +206,84 @@
       .mob-btns .btn-ghost,.mob-btns .btn-primary{text-align:center;justify-content:center;}
       .mob-btns .btn-primary{display:block;padding:13px;}
       .mob-btns .btn-ghost{display:block;padding:13px;}
-      .mob-credit{
-        text-align:center;
-        padding:10px 20px 4px;
-        font-size:11px;
-        color:var(--muted);
-      }
-      .mob-credit a{color:var(--red);text-decoration:none;font-weight:600;}
 
-      /* Page adjustments */
-      .hero{padding:88px 20px 60px;}
-      .hero-stats{gap:20px;}
+      /* Hero Mobile Enhancements */
+      .hero{padding:16px 16px 50px; min-height:auto;}
+      .hero-title{
+        font-size: clamp(78px, 14vw, 84px);
+        line-height: 1.05;
+        width: 100%;
+        max-width: 100%;
+      }
+      .hero-sub{
+        font-size: 14px;
+        line-height: 1.6;
+        margin-top: 18px;
+        width: 100%;
+        max-width: 100%;
+        padding: 0 8px;
+      }
+
+      /* Hero Stats Mobile Grid */
+      .hero-stats{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px 12px;
+        margin-top: 40px;
+        padding-top: 32px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .stat{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        border-radius: 10px;
+      }
+      .stat-num{
+        font-size: 28px;
+        line-height: 1;
+      }
+      .stat-label{
+        font-size: 10px;
+        margin-top: 6px;
+        min-height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.2;
+      }
       .stat-divider{display:none;}
 
       .features-grid{grid-template-columns:1fr;gap:1px;}
-      .feature-card{padding:28px 24px;}
+      .feature-card{padding:28px 20px;}
 
-      .how-section{padding:60px 20px;}
+      .how-section{padding:50px 16px;}
       .how-inner{grid-template-columns:1fr;}
       .how-mockup{display:none;}
 
-      .section{padding:60px 20px;}
-      .cta-section{padding:80px 20px;}
-      .hero-actions{flex-direction:column;width:100%;align-items:stretch;}
+      .section{padding:50px 16px;}
+      .cta-section{padding:60px 16px;}
+      .hero-actions{flex-direction:column;width:100%;max-width:320px;align-items:stretch;}
       .btn-explore{justify-content:center;}
       .btn-learn{text-align:center;}
 
       /* Footer mobile */
-      footer{padding:24px 20px;}
+      footer{padding:24px 16px;}
       .footer-inner{flex-direction:column;align-items:center;gap:14px;text-align:center;}
       .footer-left{flex-direction:column;align-items:center;gap:8px;}
     }
 
     /* Mobile S ≤ 480px */
     @media(max-width:480px){
-      .hero-title{font-size:clamp(42px,11vw,64px);}
-      .hero-sub{font-size:14px;}
+      .hero-title{font-size: clamp(34px, 9.5vw, 44px);}
+      .hero-sub{font-size:13.5px;}
       .features-grid{border-radius:12px;}
-      .section-title{font-size:clamp(28px,8vw,40px);}
-      .cta-title{font-size:clamp(32px,9vw,52px);}
-      .hero-badge{font-size:10px;padding:5px 12px;}
+      .section-title{font-size:clamp(26px,7.5vw,36px);}
+      .cta-title{font-size:clamp(30px,8.5vw,46px);}
+      .hero-badge{font-size:10px;padding:5px 12px;margin-bottom:20px;}
     }
   </style>
 </head>
@@ -253,25 +306,32 @@
     <li><a href="#">About</a></li>
   </ul>
 
-  <div class="nav-cta" id="nav-cta">
-    <a href="https://hassan-gallery.site" target="_blank" rel="noopener" style="color:var(--red);text-decoration:none;font-size:11px;font-weight:600;opacity:.75;letter-spacing:.5px;" title="Built by hassan">   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      hassan</a>
+  <!-- Right side container for desktop & mobile -->
+  <div class="nav-right-box">
+    <a href="https://hassan-gallery.site" target="_blank" rel="noopener" class="hassan-nav-link" title="Built by hassan">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      hassan
+    </a>
     
-    <a href="feed.html" class="btn-primary">Explore Feed →</a>
+    <div class="nav-cta" id="nav-cta">
+      <a href="feed.html" class="btn-primary">Explore Feed →</a>
+    </div>
+
+    <!-- Hamburger (mobile only - sits on far right next to hassan link) -->
+    <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 
-  <!-- Hamburger (mobile only) -->
-  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-
   <!-- Mobile drawer -->
-  <div class=" mob-drawer" id="mob-drawer">
+  <div class="mob-drawer" id="mob-drawer">
     <a href="#features" class="mob-link" onclick="closeDrawer()">Features</a>
     <a href="#how" class="mob-link" onclick="closeDrawer()">How It Works</a>
     <a href="#" class="mob-link" onclick="closeDrawer()">Pricing</a>
     <a href="#" class="mob-link" onclick="closeDrawer()">About</a>
-    
+    <div class="mob-btns">
+      <a href="feed.html" class="btn-primary">Explore Feed →</a>
+    </div>
   </div>
 </nav>
 
@@ -426,11 +486,13 @@
 </section>
 
 <footer>
- 
+  <div class="footer-inner">
+    
+  
     <div class="footer-credit">
       Prototype designed &amp; built by <a href="https://hassan-gallery.site" target="_blank" rel="noopener">hassan</a>
     </div>
-
+  </div>
 </footer>
 
 <script>

@@ -1,737 +1,1945 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>REDWIRE — Content Feed</title>
-  <meta name="description" content="Browse and download premium video content from REDWIRE. Filter by category, search, and download in your preferred quality."/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <meta name="description"
+    content="Browse and download premium video content from REDWIRE. Filter by category, search, and download in your preferred quality." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{--red:#e63946;--red-glow:rgba(230,57,70,0.25);--black:#080808;--surface:#111111;--surface2:#1a1a1a;--surface3:#222222;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#f0f0f0;--muted:#777;--muted2:#999;--white:#ffffff;}
-    html{scroll-behavior:smooth;}
-    body{background:var(--black);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;min-height:100vh;}
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --red: #e63946;
+      --red-glow: rgba(230, 57, 70, 0.25);
+      --black: #080808;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --surface3: #222222;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.12);
+      --text: #f0f0f0;
+      --muted: #777;
+      --muted2: #999;
+      --white: #ffffff;
+    }
+
+    html,
+    body {
+      overflow-x: hidden;
+      max-width: 100%;
+      width: 100%;
+      position: relative;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
 
     /* NAV */
-    nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:rgba(8,8,8,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
-    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-    .nav-logo-text{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);}
-    .nav-logo-text span{color:var(--red);}
-    .nav-right{display:flex;align-items:center;gap:12px;}
-    .nav-back{display:flex;align-items:center;gap:6px;color:var(--muted2);text-decoration:none;font-size:13px;transition:color .2s;}
-    .nav-back:hover{color:var(--white);}
-    .nav-search{display:flex;align-items:center;gap:0;background:var(--surface);border:1px solid var(--border2);border-radius:8px;overflow:hidden;width:320px;max-width:100%;flex:1;min-width:0;}
-    .nav-search input{background:none;border:none;outline:none;color:var(--text);font-size:14px;padding:10px 14px;width:100%;font-family:'Inter',sans-serif;}
-    .nav-search input::placeholder{color:var(--muted);}
-    .nav-search-btn{background:none;border:none;padding:10px 14px;color:var(--muted);cursor:pointer;transition:color .2s;flex-shrink:0;}
-    .nav-search-btn:hover{color:var(--red);}
-    .live-badge{display:flex;align-items:center;gap:6px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);color:var(--red);padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
-    .live-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:pulse 1.5s infinite;}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 60px ;
+      background: rgba(8, 8, 8, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: background .4s ease, border-color .4s ease, padding .3s ease;
+      gap: 16px;
+    }
+
+    nav.scrolled {
+      background: rgba(8, 8, 8, 0.95);
+      border-bottom-color: var(--border);
+      padding: 13px 60px;
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--muted);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    .nav-toggle.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+      background: var(--red);
+    }
+
+    .nav-toggle.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+      background: var(--red);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 2px;
+      color: var(--white);
+    }
+
+    .nav-logo-text span {
+      color: var(--red);
+    }
+
+    .nav-right-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hassan-nav-link {
+      color: var(--red);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      opacity: .85;
+      letter-spacing: .5px;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      transition: all .2s;
+    }
+
+    .hassan-nav-link:hover {
+      opacity: 1;
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .mob-drawer {
+      display: none;
+    }
+
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 9px 22px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: #ff4757;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px var(--red-glow);
+    }
+
+    .nav-search {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      overflow: hidden;
+      width: 320px;
+      max-width: 100%;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nav-search input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 14px;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nav-search input::placeholder {
+      color: var(--muted);
+    }
+
+    .nav-search-btn {
+      background: none;
+      border: none;
+      padding: 10px 14px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color .2s;
+      flex-shrink: 0;
+    }
+
+    .nav-search-btn:hover {
+      color: var(--red);
+    }
 
     /* LAYOUT */
-    .page-layout{display:flex;min-height:calc(100vh - 57px);}
+    .page-layout {
+      display: flex;
+      min-height: calc(100vh - 65px);
+      margin-top: 65px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      background: var(--black);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--white);
+    }
+
+    .footer-credit {
+      width: 100%;
+      text-align: center;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .footer-credit a {
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+
+    .footer-credit a:hover {
+      opacity: .75;
+    }
 
     /* SIDEBAR */
-    .sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);padding:24px 0;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto;}
-    .sidebar::-webkit-scrollbar{width:4px;}
-    .sidebar::-webkit-scrollbar-track{background:transparent;}
-    .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-    .sidebar-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:0 20px;margin-bottom:8px;margin-top:20px;}
-    .sidebar-label:first-child{margin-top:0;}
-    .cat-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;color:var(--muted2);padding:10px 20px;cursor:pointer;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;transition:all .15s;text-align:left;}
-    .cat-btn:hover{color:var(--white);background:rgba(255,255,255,0.04);}
-    .cat-btn.active{color:var(--white);background:rgba(230,57,70,0.1);}
-    .cat-btn.active .cat-name{color:var(--red);}
-    .cat-count{font-size:10px;background:var(--surface2);color:var(--muted);padding:2px 7px;border-radius:10px;font-weight:600;}
-    .cat-btn.active .cat-count{background:rgba(230,57,70,0.2);color:var(--red);}
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      position: sticky;
+      top: 57px;
+      height: calc(100vh - 57px);
+      overflow-y: auto;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 2px;
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 20px;
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+
+    .sidebar-label:first-child {
+      margin-top: 0;
+    }
+
+    .cat-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--muted2);
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      transition: all .15s;
+      text-align: left;
+    }
+
+    .cat-btn:hover {
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .cat-btn.active {
+      color: var(--white);
+      background: rgba(230, 57, 70, 0.1);
+    }
+
+    .cat-btn.active .cat-name {
+      color: var(--red);
+    }
+
+    .cat-count {
+      font-size: 10px;
+      background: var(--surface2);
+      color: var(--muted);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .cat-btn.active .cat-count {
+      background: rgba(230, 57, 70, 0.2);
+      color: var(--red);
+    }
 
     /* MAIN */
-    .main-content{flex:1;padding:28px 32px;min-width:0;}
+    .main-content {
+      flex: 1;
+      padding: 28px 32px;
+      min-width: 0;
+    }
 
     /* FILTER BAR */
-    .filter-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:16px;}
-    .filter-pills{display:flex;gap:8px;flex-wrap:wrap;}
-    .pill{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:7px 16px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
-    .pill:hover{border-color:var(--border2);color:var(--white);}
-    .pill.active{background:var(--red);border-color:var(--red);color:#fff;}
-    .sort-select{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:8px 14px;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;outline:none;}
-    .sort-select:focus{border-color:var(--red);}
-    .results-count{font-size:13px;color:var(--muted);white-space:nowrap;}
-    .results-count span{color:var(--white);font-weight:600;}
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 7px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      border-color: var(--border2);
+      color: var(--white);
+    }
+
+    .pill.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    .sort-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .sort-select:focus {
+      border-color: var(--red);
+    }
+
+    .results-count {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .results-count span {
+      color: var(--white);
+      font-weight: 600;
+    }
 
     /* GRID */
-    .video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
 
     /* VIDEO CARD */
-    .video-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .25s;position:relative;}
-    .video-card:hover{border-color:rgba(230,57,70,0.3);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.5);}
-    .video-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;}
-    .video-thumb-bg{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
-    .video-card:hover .video-thumb-bg{transform:scale(1.04);}
-    .thumb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);transition:opacity .3s;}
-    .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);width:48px;height:48px;background:rgba(230,57,70,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:all .3s;}
-    .video-card:hover .play-btn{opacity:1;transform:translate(-50%,-50%) scale(1);}
-    .thumb-duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.85);color:#fff;font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;}
-    .thumb-category{position:absolute;top:10px;left:10px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;}
-    .thumb-exclusive{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);border:1px solid rgba(255,215,0,0.5);color:#ffd700;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px;}
-    .card-body{padding:16px;}
-    .card-title{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-    .card-meta{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);}
-    .card-date{display:flex;align-items:center;gap:4px;}
-    .card-tags{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap;}
-    .tag{background:var(--surface2);color:var(--muted2);font-size:10px;padding:3px 8px;border-radius:4px;font-weight:500;}
-    .card-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-    .card-res-tags{display:flex;gap:5px;}
-    .res-tag{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);color:var(--red);font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;}
-    .card-dl-btn{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--border);color:var(--muted2);padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
-    .card-dl-btn:hover{border-color:var(--red);color:var(--red);}
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+    }
+
+    .video-card:hover {
+      border-color: rgba(230, 57, 70, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .video-thumb {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+    }
+
+    .video-thumb-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s;
+    }
+
+    .video-card:hover .video-thumb-bg {
+      transform: scale(1.04);
+    }
+
+    .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 50%);
+      transition: opacity .3s;
+    }
+
+    .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 48px;
+      height: 48px;
+      background: rgba(230, 57, 70, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all .3s;
+    }
+
+    .video-card:hover .play-btn {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .thumb-duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 4px;
+    }
+
+    .thumb-category {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .thumb-exclusive {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 215, 0, 0.5);
+      color: #ffd700;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: .5px;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .card-date {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: var(--surface2);
+      color: var(--muted2);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .card-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-res-tags {
+      display: flex;
+      gap: 5px;
+    }
+
+    .res-tag {
+      background: rgba(230, 57, 70, 0.1);
+      border: 1px solid rgba(230, 57, 70, 0.2);
+      color: var(--red);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .card-dl-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .card-dl-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
 
     /* MODAL */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
-    .modal-overlay.open{display:flex;}
-    .modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:920px;max-height:90vh;overflow-y:auto;position:relative;}
-    .modal::-webkit-scrollbar{width:4px;}
-    .modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-    .modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:1px solid var(--border);color:var(--muted2);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;z-index:10;}
-    .modal-close:hover{border-color:var(--red);color:var(--red);}
-    .modal-player{position:relative;aspect-ratio:16/9;background:#000;border-radius:12px 12px 0 0;overflow:hidden;}
-    .modal-player-bg{width:100%;height:100%;object-fit:cover;display:block;}
-    .player-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);}
-    .player-play{width:72px;height:72px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;box-shadow:0 0 40px rgba(230,57,70,0.5);}
-    .player-play:hover{transform:scale(1.1);box-shadow:0 0 60px rgba(230,57,70,0.7);}
-    .player-wm{position:absolute;top:16px;right:16px;font-size:11px;font-weight:800;color:rgba(255,255,255,0.4);letter-spacing:2px;border:1px solid rgba(255,255,255,0.15);padding:4px 10px;border-radius:4px;}
-    .player-progress{position:absolute;bottom:0;left:0;right:0;padding:8px 16px 12px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);}
-    .progress-bar{height:3px;background:rgba(255,255,255,0.2);border-radius:2px;cursor:pointer;position:relative;}
-    .progress-fill{height:100%;background:var(--red);border-radius:2px;width:35%;}
-    .progress-time{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.6);}
-    .modal-body{padding:24px 28px;}
-    .modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;}
-    .modal-title{font-size:20px;font-weight:800;line-height:1.3;flex:1;}
-    .modal-category{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;align-self:flex-start;margin-top:4px;}
-    .modal-meta-row{display:flex;align-items:center;gap:20px;margin-bottom:20px;flex-wrap:wrap;}
-    .meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
-    .meta-item strong{color:var(--muted2);}
-    .meta-sep{width:4px;height:4px;background:var(--border2);border-radius:50%;}
-    .modal-section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-    .modal-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
-    .modal-desc{font-size:14px;color:var(--muted2);line-height:1.8;margin-bottom:24px;}
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 920px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 2px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      z-index: 10;
+    }
+
+    .modal-close:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .modal-player {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 12px 12px 0 0;
+      overflow: hidden;
+    }
+
+    .modal-player-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .player-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .player-play {
+      width: 72px;
+      height: 72px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .25s;
+      box-shadow: 0 0 40px rgba(230, 57, 70, 0.5);
+    }
+
+    .player-play:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 60px rgba(230, 57, 70, 0.7);
+    }
+
+    .player-wm {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .player-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 16px 12px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--red);
+      border-radius: 2px;
+      width: 35%;
+    }
+
+    .progress-time {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .modal-body {
+      padding: 24px 28px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    .modal-category {
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    .modal-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .meta-item strong {
+      color: var(--muted2);
+    }
+
+    .meta-sep {
+      width: 4px;
+      height: 4px;
+      background: var(--border2);
+      border-radius: 50%;
+    }
+
+    .modal-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: var(--muted2);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
     /* TIMESTAMPS */
-    .timestamps{display:flex;flex-direction:column;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
-    .ts-item{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;}
-    .ts-item:last-child{border-bottom:none;}
-    .ts-item:hover{background:var(--surface2);}
-    .ts-time{background:rgba(230,57,70,0.15);border:1px solid rgba(230,57,70,0.25);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;white-space:nowrap;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;flex-shrink:0;transition:all .2s;}
-    .ts-item:hover .ts-time{background:var(--red);color:#fff;}
-    .ts-desc{font-size:13px;color:var(--muted2);line-height:1.5;}
+    .timestamps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .ts-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+      cursor: pointer;
+    }
+
+    .ts-item:last-child {
+      border-bottom: none;
+    }
+
+    .ts-item:hover {
+      background: var(--surface2);
+    }
+
+    .ts-time {
+      background: rgba(230, 57, 70, 0.15);
+      border: 1px solid rgba(230, 57, 70, 0.25);
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 5px;
+      white-space: nowrap;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+
+    .ts-item:hover .ts-time {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .ts-desc {
+      font-size: 13px;
+      color: var(--muted2);
+      line-height: 1.5;
+    }
+
     /* TAGS */
-    .modal-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px;}
-    .modal-tag{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);font-size:11px;padding:4px 12px;border-radius:100px;}
+    .modal-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .modal-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
     /* DOWNLOAD */
-    .dl-section{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;}
-    .dl-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-    .dl-title svg{color:var(--red);}
-    .dl-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
-    .dl-group label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-    .dl-options{display:flex;flex-wrap:wrap;gap:6px;}
-    .dl-opt{background:var(--surface);border:1px solid var(--border);color:var(--muted2);padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
-    .dl-opt:hover{border-color:var(--border2);color:var(--white);}
-    .dl-opt.selected{background:rgba(230,57,70,0.15);border-color:rgba(230,57,70,0.4);color:var(--red);}
-    .dl-watermark-row{display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--border);margin-top:4px;}
-    .wm-label{font-size:13px;color:var(--muted2);flex:1;}
-    .wm-label span{font-size:11px;color:var(--muted);display:block;}
-    .toggle{position:relative;width:42px;height:24px;cursor:pointer;}
-    .toggle input{display:none;}
-    .toggle-track{position:absolute;inset:0;background:var(--surface3);border:1px solid var(--border2);border-radius:12px;transition:all .2s;}
-    .toggle input:checked+.toggle-track{background:rgba(230,57,70,0.3);border-color:var(--red);}
-    .toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--muted);border-radius:50%;transition:all .2s;}
-    .toggle input:checked~.toggle-thumb{left:21px;background:var(--red);}
-    .dl-main-btn{width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Inter',sans-serif;}
-    .dl-main-btn:hover{background:#ff3a4a;box-shadow:0 8px 30px rgba(230,57,70,0.4);transform:translateY(-1px);}
-    .dl-filesize{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;}
+    .dl-section {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .dl-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dl-title svg {
+      color: var(--red);
+    }
+
+    .dl-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .dl-group label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .dl-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .dl-opt {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .dl-opt:hover {
+      border-color: var(--border2);
+      color: var(--white);
+    }
+
+    .dl-opt.selected {
+      background: rgba(230, 57, 70, 0.15);
+      border-color: rgba(230, 57, 70, 0.4);
+      color: var(--red);
+    }
+
+    .dl-watermark-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    .wm-label {
+      font-size: 13px;
+      color: var(--muted2);
+      flex: 1;
+    }
+
+    .wm-label span {
+      font-size: 11px;
+      color: var(--muted);
+      display: block;
+    }
+
+    .toggle {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      display: none;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--surface3);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      transition: all .2s;
+    }
+
+    .toggle input:checked+.toggle-track {
+      background: rgba(230, 57, 70, 0.3);
+      border-color: var(--red);
+    }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--muted);
+      border-radius: 50%;
+      transition: all .2s;
+    }
+
+    .toggle input:checked~.toggle-thumb {
+      left: 21px;
+      background: var(--red);
+    }
+
+    .dl-main-btn {
+      width: 100%;
+      margin-top: 16px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .dl-main-btn:hover {
+      background: #ff3a4a;
+      box-shadow: 0 8px 30px rgba(230, 57, 70, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .dl-filesize {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 8px;
+    }
 
     /* EMPTY / LOADING */
-    .no-results{text-align:center;padding:80px 20px;color:var(--muted);}
-    .no-results svg{color:var(--border2);margin-bottom:16px;}
-    .no-results h3{font-size:18px;color:var(--muted2);margin-bottom:8px;}
+    .no-results {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+    }
+
+    .no-results svg {
+      color: var(--border2);
+      margin-bottom: 16px;
+    }
+
+    .no-results h3 {
+      font-size: 18px;
+      color: var(--muted2);
+      margin-bottom: 8px;
+    }
 
     /* CREDIT */
-    .feed-credit{text-align:center;padding:20px 32px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
-    .feed-credit a{color:var(--red);text-decoration:none;font-weight:600;transition:opacity .2s;}
-    .feed-credit a:hover{opacity:.8;}
+    .feed-credit {
+      text-align: center;
+      padding: 20px 32px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
 
-    /* MOBILE FILTER DRAWER */
-    .mob-filter-btn{display:none;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border2);color:var(--muted2);padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;flex-shrink:0;}
+    .feed-credit a {
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+
+    .feed-credit a:hover {
+      opacity: .8;
+    }
 
     /* ═══════════════════════════════
        RESPONSIVE — feed.html
        ═══════════════════════════════ */
 
     /* Tablet ≤ 1024px */
-    @media(max-width:1024px){
-      .sidebar{width:180px;}
-      .video-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
-      .dl-grid{grid-template-columns:1fr 1fr;}
-      nav{padding:12px 20px;}
+    @media(max-width:1024px) {
+      .sidebar {
+        width: 180px;
+      }
+
+      .video-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      }
+
+      .dl-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      nav {
+        padding: 12px 20px;
+      }
     }
 
-    /* Tablet ≤ 768px */
-    @media(max-width:768px){
-      nav{padding:12px 16px;}
-      .nav-search{width:100%;order:3;flex-basis:100%;}
-      .nav-right{order:2;}
-      .nav-logo{order:1;}
-
-      /* Sidebar becomes top horizontal scroll strip */
-      .page-layout{flex-direction:column;}
-      .sidebar{
-        width:100%;height:auto;
-        position:static;
-        border-right:none;
-        border-bottom:1px solid var(--border);
-        padding:12px 0;
-        display:flex;
-        flex-wrap:nowrap;
-        overflow-x:auto;
-        gap:0;
-        scrollbar-width:none;
+    /* Mobile ≤ 768px */
+    @media(max-width:768px) {
+      nav {
+        padding: 10px 14px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px 0;
+        width: 100%;
+        max-width: 100%;
       }
-      .sidebar::-webkit-scrollbar{display:none;}
-      .sidebar-label{display:none;}
-      .cat-btn{
-        flex-shrink:0;
-        padding:8px 16px;
-        border-radius:100px;
-        margin:0 4px;
-        border:1px solid var(--border);
-        white-space:nowrap;
-        font-size:12px;
+
+      nav.scrolled {
+        padding: 10px 14px;
       }
-      .cat-btn:first-of-type{margin-left:16px;}
-      .cat-btn.active{background:var(--red);border-color:var(--red);}
-      .cat-btn.active .cat-name{color:#fff;}
-      .cat-btn.active .cat-count{background:rgba(255,255,255,0.2);color:#fff;}
 
-      .main-content{padding:20px 16px;}
+      .nav-logo {
+        order: 1;
+      }
 
-      /* Filter bar stacks */
-      .filter-bar{flex-direction:column;align-items:flex-start;gap:12px;}
-      .filter-pills{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;width:100%;}
-      .filter-pills::-webkit-scrollbar{display:none;}
-      .pill{flex-shrink:0;}
+      .nav-right-box {
+        order: 2;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-search {
+        order: 3;
+        width: 100%;
+        flex-basis: 100%;
+        margin-top: 4px;
+      }
+
+      /* Page Layout Fix */
+      .page-layout {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        margin-top: 100px;
+      }
+
+      /* Clean Horizontal Categories Bar */
+      .sidebar {
+        width: 100% !important;
+        max-width: 100vw !important;
+        height: auto !important;
+        position: sticky !important;
+        top: 0px !important;
+        z-index: 90 !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-right: none !important;
+        padding: 10px 14px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 8px !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .sidebar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .sidebar-label {
+        display: none !important;
+      }
+
+      /* Hide date filters on mobile to keep categories clean */
+      .sidebar button[id^="date-"] {
+        display: none !important;
+      }
+
+      .cat-btn {
+        width: auto !important;
+        flex-shrink: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 7px 16px !important;
+        border-radius: 100px !important;
+        margin: 0 !important;
+        border: 1px solid var(--border) !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+        color: var(--muted2) !important;
+        gap: 6px !important;
+      }
+
+      .cat-btn.active {
+        background: var(--red) !important;
+        border-color: var(--red) !important;
+        color: #fff !important;
+      }
+
+      .cat-btn.active .cat-name {
+        color: #fff !important;
+      }
+
+      .cat-btn.active .cat-count {
+        background: rgba(255, 255, 255, 0.25) !important;
+        color: #fff !important;
+      }
+
+      .main-content {
+        padding: 16px 14px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      /* Filter bar responsive adjustments */
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      .filter-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+        width: 100%;
+        padding-bottom: 2px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .filter-pills::-webkit-scrollbar {
+        display: none;
+      }
+
+      .pill {
+        flex-shrink: 0;
+        padding: 6px 14px;
+        font-size: 11.5px;
+      }
+
+      /* Controls row below pills */
+      .filter-bar>div:last-child {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
 
       /* Video grid single column */
-      .video-grid{grid-template-columns:1fr;}
+      .video-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        width: 100%;
+      }
 
-      /* Modal full-screen */
-      .modal-overlay{padding:0;align-items:flex-end;}
-      .modal{border-radius:16px 16px 0 0;max-height:95vh;}
-      .modal-body{padding:20px 16px;}
-      .modal-header{flex-direction:column;gap:8px;}
-      .modal-title{font-size:17px;}
-      .dl-grid{grid-template-columns:1fr;gap:12px;}
-      .modal-meta-row{gap:10px;}
-      .meta-sep{display:none;}
+      /* Modal full-screen/sheet */
+      .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+
+      .modal {
+        border-radius: 16px 16px 0 0;
+        max-height: 92vh;
+      }
+
+      .modal-body {
+        padding: 16px 14px;
+      }
+
+      .modal-header {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .modal-title {
+        font-size: 16px;
+      }
+
+      .dl-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .modal-meta-row {
+        gap: 8px;
+      }
+
+      .meta-sep {
+        display: none;
+      }
     }
 
     /* Mobile S ≤ 480px */
-    @media(max-width:480px){
-      .live-badge{display:none;}
-      .nav-back span{display:none;}
-      .video-grid{grid-template-columns:1fr;gap:14px;}
-      .filter-bar>div:last-child{width:100%;display:flex;justify-content:space-between;}
-      .dl-opt{padding:6px 10px;font-size:11px;}
-      .modal{border-radius:12px 12px 0 0;}
+    @media(max-width:480px) {
+      .live-badge {
+        display: none;
+      }
+
+      .video-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .dl-opt {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+
+      .modal {
+        border-radius: 12px 12px 0 0;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo">
-    <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-      <path d="M18 4L8 18H16L14 28L24 14H16L18 4Z" fill="#e63946"/>
-      <path d="M26 10C28.2 12.2 28.2 15.8 26 18" stroke="#e63946" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-    </svg>
-    <span class="nav-logo-text">RED<span>WIRE</span></span>
-  </a>
-
-  <div class="nav-search">
-    <input type="text" id="search-input" placeholder="Search videos, topics, keywords..." />
-    <button class="nav-search-btn" onclick="doSearch()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </button>
-  </div>
-
-  <div class="nav-right">
-   <a href="https://hassan-gallery.site" target="_blank" rel="noopener" class="nav-back" style="color:var(--red);opacity:.7;font-size:11px;letter-spacing:.5px;" title="Built by hassan">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      hassan
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <path d="M18 4L8 18H16L14 28L24 14H16L18 4Z" fill="#e63946" />
+        <path d="M26 10C28.2 12.2 28.2 15.8 26 18" stroke="#e63946" stroke-width="2" stroke-linecap="round"
+          opacity="0.6" />
+        <path d="M29 7C32.8 10.8 32.8 21.2 29 25" stroke="#e63946" stroke-width="2" stroke-linecap="round"
+          opacity="0.3" />
+      </svg>
+      <span class="nav-logo-text">RED<span>WIRE</span></span>
     </a>
+
+    <div class="nav-search">
+      <input type="text" id="search-input" placeholder="Search videos, topics, keywords..." />
+      <button class="nav-search-btn" onclick="doSearch()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="nav-right-box">
+      <a href="https://hassan-gallery.site" target="_blank" rel="noopener" class="hassan-nav-link"
+        title="Built by hassan">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </svg>
+        hassan
+      </a>
+
+
+
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="mob-drawer" id="mob-drawer">
+      <a href="index.html#features" class="mob-link" onclick="closeDrawer()">Features</a>
+      <a href="index.html#how" class="mob-link" onclick="closeDrawer()">How It Works</a>
+
+    </div>
+  </nav>
+
+  <div class="page-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Categories</div>
+      <button class="cat-btn active" onclick="filterCategory('all')" id="cat-all">
+        <span class="cat-name">All Content</span>
+        <span class="cat-count" id="count-all">18</span>
+      </button>
+      <button class="cat-btn" onclick="filterCategory('sports')" id="cat-sports">
+        <span class="cat-name">⚽ Sports</span>
+        <span class="cat-count" id="count-sports">6</span>
+      </button>
+      <button class="cat-btn" onclick="filterCategory('politics')" id="cat-politics">
+        <span class="cat-name">🏛 Politics</span>
+        <span class="cat-count" id="count-politics">3</span>
+      </button>
+      <button class="cat-btn" onclick="filterCategory('entertainment')" id="cat-entertainment">
+        <span class="cat-name">🎬 Entertainment</span>
+        <span class="cat-count" id="count-entertainment">3</span>
+      </button>
+      <button class="cat-btn" onclick="filterCategory('breaking')" id="cat-breaking">
+        <span class="cat-name">🔴 Breaking News</span>
+        <span class="cat-count" id="count-breaking">3</span>
+      </button>
+      <button class="cat-btn" onclick="filterCategory('business')" id="cat-business">
+        <span class="cat-name">💼 Business</span>
+        <span class="cat-count" id="count-business">3</span>
+      </button>
+
+      <div class="sidebar-label" style="margin-top:28px;">Date Range</div>
+      <button class="cat-btn" onclick="filterDate('today')" id="date-today"><span class="cat-name">Today</span></button>
+      <button class="cat-btn" onclick="filterDate('week')" id="date-week"><span class="cat-name">This
+          Week</span></button>
+      <button class="cat-btn" onclick="filterDate('month')" id="date-month"><span class="cat-name">This
+          Month</span></button>
+      <button class="cat-btn active" onclick="filterDate('all')" id="date-all"><span class="cat-name">All
+          Time</span></button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+      <div class="filter-bar">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;">
+          <div class="filter-pills" id="format-pills">
+            <button class="pill active" onclick="filterFormat('all')">All Formats</button>
+            <button class="pill" onclick="filterFormat('4k')">4K</button>
+            <button class="pill" onclick="filterFormat('1080p')">1080p</button>
+            <button class="pill" onclick="filterFormat('720p')">720p</button>
+            <button class="pill" onclick="filterFormat('exclusive')">⭐ Exclusive</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="results-count"><span id="result-count">18</span> videos</span>
+          <select class="sort-select" id="sort-select" onchange="sortVideos()">
+            <option value="latest">Latest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="az">A → Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="video-grid" id="video-grid"></div>
+      <div class="no-results" id="no-results" style="display:none;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <h3>No videos found</h3>
+        <p>Try adjusting your search or filters</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
     
-  </div>
-</nav>
-
-<div class="page-layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-label">Categories</div>
-    <button class="cat-btn active" onclick="filterCategory('all')" id="cat-all">
-      <span class="cat-name">All Content</span>
-      <span class="cat-count" id="count-all">18</span>
-    </button>
-    <button class="cat-btn" onclick="filterCategory('sports')" id="cat-sports">
-      <span class="cat-name">⚽ Sports</span>
-      <span class="cat-count" id="count-sports">6</span>
-    </button>
-    <button class="cat-btn" onclick="filterCategory('politics')" id="cat-politics">
-      <span class="cat-name">🏛 Politics</span>
-      <span class="cat-count" id="count-politics">3</span>
-    </button>
-    <button class="cat-btn" onclick="filterCategory('entertainment')" id="cat-entertainment">
-      <span class="cat-name">🎬 Entertainment</span>
-      <span class="cat-count" id="count-entertainment">3</span>
-    </button>
-    <button class="cat-btn" onclick="filterCategory('breaking')" id="cat-breaking">
-      <span class="cat-name">🔴 Breaking News</span>
-      <span class="cat-count" id="count-breaking">3</span>
-    </button>
-    <button class="cat-btn" onclick="filterCategory('business')" id="cat-business">
-      <span class="cat-name">💼 Business</span>
-      <span class="cat-count" id="count-business">3</span>
-    </button>
-
-    <div class="sidebar-label" style="margin-top:28px;">Date Range</div>
-    <button class="cat-btn" onclick="filterDate('today')" id="date-today"><span class="cat-name">Today</span></button>
-    <button class="cat-btn" onclick="filterDate('week')" id="date-week"><span class="cat-name">This Week</span></button>
-    <button class="cat-btn" onclick="filterDate('month')" id="date-month"><span class="cat-name">This Month</span></button>
-    <button class="cat-btn active" onclick="filterDate('all')" id="date-all"><span class="cat-name">All Time</span></button>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main-content">
-    <div class="filter-bar">
-      <div style="display:flex;align-items:center;gap:12px;flex:1;">
-        <div class="filter-pills" id="format-pills">
-          <button class="pill active" onclick="filterFormat('all')">All Formats</button>
-          <button class="pill" onclick="filterFormat('4k')">4K</button>
-          <button class="pill" onclick="filterFormat('1080p')">1080p</button>
-          <button class="pill" onclick="filterFormat('720p')">720p</button>
-          <button class="pill" onclick="filterFormat('exclusive')">⭐ Exclusive</button>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span class="results-count"><span id="result-count">18</span> videos</span>
-        <select class="sort-select" id="sort-select" onchange="sortVideos()">
-          <option value="latest">Latest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="az">A → Z</option>
-        </select>
+      <div class="footer-credit">
+        Prototype designed &amp; built by <a href="https://hassan-gallery.site" target="_blank"
+          rel="noopener">hassan</a>
       </div>
     </div>
-
-    <div class="video-grid" id="video-grid"></div>
-    <div class="no-results" id="no-results" style="display:none;">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <h3>No videos found</h3>
-      <p>Try adjusting your search or filters</p>
-    </div>
-  </main>
-</div>
-
-<!-- CREDIT FOOTER -->
-<div class="feed-credit">
-  Prototype designed & built by <a href="https://hassan-gallery.site" target="_blank" rel="noopener">hassan</a>
-</div>
+  </footer>
 
 
-<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
-  <div class="modal" id="modal-inner">
-    <button class="modal-close" onclick="closeModal()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="modal-player">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a 0%,#0d0d0d 100%);display:flex;align-items:center;justify-content:center;position:relative;" id="player-container">
-        <div class="player-overlay">
-          <div class="player-play" onclick="togglePlay()">
-            <svg id="play-icon" width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+  <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+    <div class="modal" id="modal-inner">
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-player">
+        <div
+          style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a 0%,#0d0d0d 100%);display:flex;align-items:center;justify-content:center;position:relative;"
+          id="player-container">
+          <div class="player-overlay">
+            <div class="player-play" onclick="togglePlay()">
+              <svg id="play-icon" width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+            </div>
           </div>
-        </div>
-        <div class="player-wm" id="player-wm" style="display:none;">REDWIRE</div>
-        <div class="player-progress">
-          <div class="progress-bar" onclick="seekVideo(event)">
-            <div class="progress-fill" id="progress-fill"></div>
-          </div>
-          <div class="progress-time">
-            <span id="current-time">0:00</span>
-            <span id="total-time">0:00</span>
+          <div class="player-wm" id="player-wm" style="display:none;">REDWIRE</div>
+          <div class="player-progress">
+            <div class="progress-bar" onclick="seekVideo(event)">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-time">
+              <span id="current-time">0:00</span>
+              <span id="total-time">0:00</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="modal-body" id="modal-body">
-      <!-- populated by JS -->
+      <div class="modal-body" id="modal-body">
+        <!-- populated by JS -->
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-const VIDEOS = [
-  {
-    id:1, category:'sports', title:'Champions League Final: Dramatic Last-Minute Goals — Full Match Highlights',
-    date:'2025-08-09', duration:'8:42', exclusive:true,
-    formats:['4K','1080p','720p'],
-    tags:['Football','UEFA','Champions League','Madrid','Paris'],
-    desc:'Breathtaking conclusion to the 2025 UEFA Champions League Final as Real Madrid faced Paris Saint-Germain in a sold-out Wembley Stadium. The match featured two red cards, a VAR reversal, and a 94th-minute winner that secured Madrid\'s 16th European title in front of 90,000 fans.',
-    timestamps:[
-      {t:'0:00',d:'Pre-match atmosphere at Wembley Stadium — crowd shots and player warm-ups'},
-      {t:'0:45',d:'Kick-off — opening exchanges, both teams pressing high'},
-      {t:'1:20',d:'Mbappé first-half chance — struck wide from 20 yards'},
-      {t:'2:15',d:'Vinicius Jr. red card following two-footed challenge in the box'},
-      {t:'3:40',d:'PSG take the lead — stunning long-range effort from Fabian Ruiz'},
-      {t:'4:55',d:'Half-time — teams enter the tunnel, fans reaction'},
-      {t:'5:30',d:'Second half: Real Madrid push forward with 10 men'},
-      {t:'6:10',d:'VAR reversal — PSG goal ruled offside after 4-minute review'},
-      {t:'7:20',d:'Equaliser — Bellingham header from corner kick, stadium erupts'},
-      {t:'8:05',d:'94th minute winner — Jude Bellingham curling effort into top corner'},
-      {t:'8:30',d:'Final whistle — Real Madrid celebrations and trophy lift'},
-    ]
-  },
-  {
-    id:2, category:'sports', title:'Olympic 100m Sprint: World Record Broken at Paris Athletics Championship',
-    date:'2025-08-07', duration:'4:18', exclusive:false,
-    formats:['4K','1080p','720p'],
-    tags:['Athletics','Olympics','Sprint','World Record','Paris'],
-    desc:'Historic moment at the Stade de France as American sprinter Caleb Johnson clocks 9.58 seconds, equalling Usain Bolt\'s long-standing world record in the men\'s 100m final. All eight finalists recorded personal bests in ideal conditions.',
-    timestamps:[
-      {t:'0:00',d:'Athletes introduced to the crowd — stadium atmosphere'},
-      {t:'0:30',d:'False start by Lane 4, Ugandan sprinter Jones'},
-      {t:'1:10',d:'Second attempt — all eight athletes set in blocks'},
-      {t:'1:45',d:'GUN — explosive start, Caleb Johnson leads from 30m'},
-      {t:'2:10',d:'Finish line — 9.58 seconds, world record equalled'},
-      {t:'2:40',d:'Slow motion replay from trackside and overhead cameras'},
-      {t:'3:20',d:'Johnson\'s celebration and reaction interview trackside'},
-      {t:'3:55',d:'Results board and medal podium ceremony begins'},
-    ]
-  },
-  {
-    id:3, category:'sports', title:'Formula 1 Abu Dhabi GP: Verstappen Secures 5th Consecutive Championship',
-    date:'2025-08-05', duration:'6:30', exclusive:true,
-    formats:['4K','1080p'],
-    tags:['F1','Formula One','Verstappen','Championship','Abu Dhabi'],
-    desc:'Max Verstappen crosses the finish line at Yas Marina Circuit to clinch an unprecedented fifth consecutive Formula 1 World Championship. Hamilton finished second, Norris third, in a race that featured three safety car periods and dramatic tire strategies.',
-    timestamps:[
-      {t:'0:00',d:'Race start — formation lap and grid shots'},
-      {t:'0:50',d:'Lap 1 — Verstappen leads from pole, Hamilton close behind'},
-      {t:'1:30',d:'Safety car — debris on track after Sainz incident'},
-      {t:'2:15',d:'Pit window opens — Norris pits for medium tires'},
-      {t:'3:00',d:'Verstappen\'s decisive overtake on backmarker Albon'},
-      {t:'4:10',d:'Final 10 laps — Verstappen extends lead to 8 seconds'},
-      {t:'5:20',d:'Chequered flag — Verstappen crosses the line'},
-      {t:'5:50',d:'Trophy presentation and champagne on the podium'},
-    ]
-  },
-  {
-    id:4, category:'sports', title:'Tennis Grand Slam: Djokovic vs Alcaraz Epic 5-Set Wimbledon Final',
-    date:'2025-07-14', duration:'12:00', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['Tennis','Wimbledon','Djokovic','Alcaraz','Grand Slam'],
-    desc:'A five-hour, five-set epic at the All England Club between Novak Djokovic and Carlos Alcaraz for the Wimbledon title. The match featured 12 service breaks, an emotional Djokovic retirement scare in the fourth set, and ended with Alcaraz lifting his second consecutive Wimbledon trophy.',
-    timestamps:[
-      {t:'0:00',d:'Players walk onto Centre Court — crowd standing ovation'},
-      {t:'1:00',d:'Set 1 — Alcaraz takes it 7-5 after breaking in the 11th game'},
-      {t:'2:30',d:'Set 2 — Djokovic levels at 6-3, dominant serving display'},
-      {t:'4:00',d:'Set 3 — tiebreak, Alcaraz wins on a controversial line call'},
-      {t:'6:20',d:'Djokovic medical timeout — left knee being treated courtside'},
-      {t:'7:10',d:'Set 4 — inspired Djokovic wins 6-2, crowd on feet'},
-      {t:'9:00',d:'Deciding set — tension on Centre Court, breaks exchanged'},
-      {t:'11:00',d:'Alcaraz match point — forehand winner down the line'},
-      {t:'11:40',d:'Alcaraz lifts the trophy — tearful celebrations'},
-    ]
-  },
-  {
-    id:5, category:'sports', title:'NBA Finals Game 7: Lakers vs Celtics — Overtime Thriller in Boston',
-    date:'2025-06-22', duration:'9:15', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['NBA','Basketball','Lakers','Celtics','Finals','Boston'],
-    desc:'The most-watched NBA Finals Game 7 in television history. LeBron James returns to lead the Lakers to an overtime victory in Boston, scoring 41 points including the game-tying buzzer beater that forced OT and the go-ahead basket with 0.8 seconds remaining.',
-    timestamps:[
-      {t:'0:00',d:'Opening tip-off — packed TD Garden, electric atmosphere'},
-      {t:'1:30',d:'Q1 — Celtics jump to 12-point lead, Tatum on fire'},
-      {t:'3:00',d:'LeBron James first-half surge — 20 points in Q2'},
-      {t:'4:30',d:'Halftime — Celtics lead 61-54'},
-      {t:'5:30',d:'Q3 — Lakers rally, Anthony Davis dominant in the paint'},
-      {t:'6:45',d:'Final seconds — LeBron\'s buzzer-beating three-pointer'},
-      {t:'7:20',d:'Overtime — LeBron with 40 points, Lakers win 112-110'},
-      {t:'8:30',d:'Trophy celebration and MVP announcement — LeBron'},
-    ]
-  },
-  {
-    id:6, category:'sports', title:'Cricket World Cup: India vs Australia — Final Day Full Coverage',
-    date:'2025-07-30', duration:'7:00', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['Cricket','World Cup','India','Australia','Final'],
-    desc:'India clinches the ICC Cricket World Cup in a dramatic final against Australia at Lord\'s Cricket Ground. Chasing 287, India reached their target off the final ball, with Kohli contributing a masterful 94 and Bumrah claiming 5 wickets in Australia\'s innings.',
-    timestamps:[
-      {t:'0:00',d:'Australia\'s innings — openers Smith and Warner at the crease'},
-      {t:'1:30',d:'Bumrah strikes — Warner LBW for 18, big wicket'},
-      {t:'2:45',d:'Australia bowled out for 286 — Bumrah 5-for'},
-      {t:'3:10',d:'India\'s chase begins — Rohit Sharma aggressive opening'},
-      {t:'4:20',d:'Kohli enters — India 3 down for 94, match in balance'},
-      {t:'5:30',d:'Kohli\'s match-defining 94 — dismissed with 40 needed'},
-      {t:'6:15',d:'Final over — India need 11 off 6 balls'},
-      {t:'6:45',d:'India wins off the last ball — jubilant scenes at Lord\'s'},
-    ]
-  },
+  <script>
+    const VIDEOS = [
+      {
+        id: 1, category: 'sports', title: 'Champions League Final: Dramatic Last-Minute Goals — Full Match Highlights',
+        date: '2025-08-09', duration: '8:42', exclusive: true,
+        formats: ['4K', '1080p', '720p'],
+        tags: ['Football', 'UEFA', 'Champions League', 'Madrid', 'Paris'],
+        desc: 'Breathtaking conclusion to the 2025 UEFA Champions League Final as Real Madrid faced Paris Saint-Germain in a sold-out Wembley Stadium. The match featured two red cards, a VAR reversal, and a 94th-minute winner that secured Madrid\'s 16th European title in front of 90,000 fans.',
+        timestamps: [
+          { t: '0:00', d: 'Pre-match atmosphere at Wembley Stadium — crowd shots and player warm-ups' },
+          { t: '0:45', d: 'Kick-off — opening exchanges, both teams pressing high' },
+          { t: '1:20', d: 'Mbappé first-half chance — struck wide from 20 yards' },
+          { t: '2:15', d: 'Vinicius Jr. red card following two-footed challenge in the box' },
+          { t: '3:40', d: 'PSG take the lead — stunning long-range effort from Fabian Ruiz' },
+          { t: '4:55', d: 'Half-time — teams enter the tunnel, fans reaction' },
+          { t: '5:30', d: 'Second half: Real Madrid push forward with 10 men' },
+          { t: '6:10', d: 'VAR reversal — PSG goal ruled offside after 4-minute review' },
+          { t: '7:20', d: 'Equaliser — Bellingham header from corner kick, stadium erupts' },
+          { t: '8:05', d: '94th minute winner — Jude Bellingham curling effort into top corner' },
+          { t: '8:30', d: 'Final whistle — Real Madrid celebrations and trophy lift' },
+        ]
+      },
+      {
+        id: 2, category: 'sports', title: 'Olympic 100m Sprint: World Record Broken at Paris Athletics Championship',
+        date: '2025-08-07', duration: '4:18', exclusive: false,
+        formats: ['4K', '1080p', '720p'],
+        tags: ['Athletics', 'Olympics', 'Sprint', 'World Record', 'Paris'],
+        desc: 'Historic moment at the Stade de France as American sprinter Caleb Johnson clocks 9.58 seconds, equalling Usain Bolt\'s long-standing world record in the men\'s 100m final. All eight finalists recorded personal bests in ideal conditions.',
+        timestamps: [
+          { t: '0:00', d: 'Athletes introduced to the crowd — stadium atmosphere' },
+          { t: '0:30', d: 'False start by Lane 4, Ugandan sprinter Jones' },
+          { t: '1:10', d: 'Second attempt — all eight athletes set in blocks' },
+          { t: '1:45', d: 'GUN — explosive start, Caleb Johnson leads from 30m' },
+          { t: '2:10', d: 'Finish line — 9.58 seconds, world record equalled' },
+          { t: '2:40', d: 'Slow motion replay from trackside and overhead cameras' },
+          { t: '3:20', d: 'Johnson\'s celebration and reaction interview trackside' },
+          { t: '3:55', d: 'Results board and medal podium ceremony begins' },
+        ]
+      },
+      {
+        id: 3, category: 'sports', title: 'Formula 1 Abu Dhabi GP: Verstappen Secures 5th Consecutive Championship',
+        date: '2025-08-05', duration: '6:30', exclusive: true,
+        formats: ['4K', '1080p'],
+        tags: ['F1', 'Formula One', 'Verstappen', 'Championship', 'Abu Dhabi'],
+        desc: 'Max Verstappen crosses the finish line at Yas Marina Circuit to clinch an unprecedented fifth consecutive Formula 1 World Championship. Hamilton finished second, Norris third, in a race that featured three safety car periods and dramatic tire strategies.',
+        timestamps: [
+          { t: '0:00', d: 'Race start — formation lap and grid shots' },
+          { t: '0:50', d: 'Lap 1 — Verstappen leads from pole, Hamilton close behind' },
+          { t: '1:30', d: 'Safety car — debris on track after Sainz incident' },
+          { t: '2:15', d: 'Pit window opens — Norris pits for medium tires' },
+          { t: '3:00', d: 'Verstappen\'s decisive overtake on backmarker Albon' },
+          { t: '4:10', d: 'Final 10 laps — Verstappen extends lead to 8 seconds' },
+          { t: '5:20', d: 'Chequered flag — Verstappen crosses the line' },
+          { t: '5:50', d: 'Trophy presentation and champagne on the podium' },
+        ]
+      },
+      {
+        id: 4, category: 'sports', title: 'Tennis Grand Slam: Djokovic vs Alcaraz Epic 5-Set Wimbledon Final',
+        date: '2025-07-14', duration: '12:00', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['Tennis', 'Wimbledon', 'Djokovic', 'Alcaraz', 'Grand Slam'],
+        desc: 'A five-hour, five-set epic at the All England Club between Novak Djokovic and Carlos Alcaraz for the Wimbledon title. The match featured 12 service breaks, an emotional Djokovic retirement scare in the fourth set, and ended with Alcaraz lifting his second consecutive Wimbledon trophy.',
+        timestamps: [
+          { t: '0:00', d: 'Players walk onto Centre Court — crowd standing ovation' },
+          { t: '1:00', d: 'Set 1 — Alcaraz takes it 7-5 after breaking in the 11th game' },
+          { t: '2:30', d: 'Set 2 — Djokovic levels at 6-3, dominant serving display' },
+          { t: '4:00', d: 'Set 3 — tiebreak, Alcaraz wins on a controversial line call' },
+          { t: '6:20', d: 'Djokovic medical timeout — left knee being treated courtside' },
+          { t: '7:10', d: 'Set 4 — inspired Djokovic wins 6-2, crowd on feet' },
+          { t: '9:00', d: 'Deciding set — tension on Centre Court, breaks exchanged' },
+          { t: '11:00', d: 'Alcaraz match point — forehand winner down the line' },
+          { t: '11:40', d: 'Alcaraz lifts the trophy — tearful celebrations' },
+        ]
+      },
+      {
+        id: 5, category: 'sports', title: 'NBA Finals Game 7: Lakers vs Celtics — Overtime Thriller in Boston',
+        date: '2025-06-22', duration: '9:15', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['NBA', 'Basketball', 'Lakers', 'Celtics', 'Finals', 'Boston'],
+        desc: 'The most-watched NBA Finals Game 7 in television history. LeBron James returns to lead the Lakers to an overtime victory in Boston, scoring 41 points including the game-tying buzzer beater that forced OT and the go-ahead basket with 0.8 seconds remaining.',
+        timestamps: [
+          { t: '0:00', d: 'Opening tip-off — packed TD Garden, electric atmosphere' },
+          { t: '1:30', d: 'Q1 — Celtics jump to 12-point lead, Tatum on fire' },
+          { t: '3:00', d: 'LeBron James first-half surge — 20 points in Q2' },
+          { t: '4:30', d: 'Halftime — Celtics lead 61-54' },
+          { t: '5:30', d: 'Q3 — Lakers rally, Anthony Davis dominant in the paint' },
+          { t: '6:45', d: 'Final seconds — LeBron\'s buzzer-beating three-pointer' },
+          { t: '7:20', d: 'Overtime — LeBron with 40 points, Lakers win 112-110' },
+          { t: '8:30', d: 'Trophy celebration and MVP announcement — LeBron' },
+        ]
+      },
+      {
+        id: 6, category: 'sports', title: 'Cricket World Cup: India vs Australia — Final Day Full Coverage',
+        date: '2025-07-30', duration: '7:00', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['Cricket', 'World Cup', 'India', 'Australia', 'Final'],
+        desc: 'India clinches the ICC Cricket World Cup in a dramatic final against Australia at Lord\'s Cricket Ground. Chasing 287, India reached their target off the final ball, with Kohli contributing a masterful 94 and Bumrah claiming 5 wickets in Australia\'s innings.',
+        timestamps: [
+          { t: '0:00', d: 'Australia\'s innings — openers Smith and Warner at the crease' },
+          { t: '1:30', d: 'Bumrah strikes — Warner LBW for 18, big wicket' },
+          { t: '2:45', d: 'Australia bowled out for 286 — Bumrah 5-for' },
+          { t: '3:10', d: 'India\'s chase begins — Rohit Sharma aggressive opening' },
+          { t: '4:20', d: 'Kohli enters — India 3 down for 94, match in balance' },
+          { t: '5:30', d: 'Kohli\'s match-defining 94 — dismissed with 40 needed' },
+          { t: '6:15', d: 'Final over — India need 11 off 6 balls' },
+          { t: '6:45', d: 'India wins off the last ball — jubilant scenes at Lord\'s' },
+        ]
+      },
 
-  {
-    id:7, category:'politics', title:'UN Security Council Emergency Session: Gaza Ceasefire Resolution Passes',
-    date:'2025-08-08', duration:'5:20', exclusive:true,
-    formats:['4K','1080p','720p'],
-    tags:['UN','Security Council','Ceasefire','Gaza','Diplomacy'],
-    desc:'The United Nations Security Council convenes an emergency session and votes 14-0 with one abstention to adopt Resolution 2784, calling for an immediate and permanent ceasefire in Gaza. The US ends months of vetoes with its support. Full session footage including closing statements from all 15 member states.',
-    timestamps:[
-      {t:'0:00',d:'Security Council chamber — delegates take seats, media present'},
-      {t:'0:40',d:'Secretary-General Guterres opening statement on humanitarian crisis'},
-      {t:'1:30',d:'US Ambassador\'s address — historic shift in position explained'},
-      {t:'2:10',d:'French and UK representatives speak in support of resolution'},
-      {t:'2:55',d:'Vote called — 14-0 in favor, one abstention'},
-      {t:'3:30',d:'Resolution declared adopted — immediate ceasefire ordered'},
-      {t:'4:10',d:'Reaction from Israeli and Palestinian observer missions'},
-      {t:'4:50',d:'Press conference outside chamber — world leaders react'},
-    ]
-  },
-  {
-    id:8, category:'politics', title:'US Presidential Debate: Harris vs DeSantis — Key Exchange Moments',
-    date:'2025-07-22', duration:'10:00', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['US Politics','Presidential Debate','Harris','DeSantis','2026 Election'],
-    desc:'Highlights from the first major 2026 presidential debate held at the Reagan Library. A 90-minute debate that produced multiple viral moments including a heated exchange on immigration policy, healthcare costs, and foreign policy in the Pacific.',
-    timestamps:[
-      {t:'0:00',d:'Candidates enter stage — opening handshake and positions'},
-      {t:'0:45',d:'Opening statements — Harris on economic record'},
-      {t:'1:30',d:'DeSantis immigration attack — Harris rebuttal'},
-      {t:'3:10',d:'Healthcare flashpoint — both candidates trade statistics'},
-      {t:'5:00',d:'Taiwan question — significant difference in positions emerges'},
-      {t:'7:20',d:'Climate policy exchange — Harris calls for binding commitments'},
-      {t:'8:45',d:'Closing statements — DeSantis pledges tax cuts'},
-      {t:'9:30',d:'Post-debate analysis and immediate reaction polls'},
-    ]
-  },
-  {
-    id:9, category:'politics', title:'G7 Summit Communiqué: AI Governance Framework Signed by All Leaders',
-    date:'2025-08-01', duration:'6:00', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['G7','AI Regulation','International Policy','Tech Governance'],
-    desc:'Leaders of the G7 nations sign the Hiroshima AI Process Framework at the Taormina Summit in Sicily, establishing binding international standards for frontier AI development, deployment restrictions, and mandatory safety evaluations. Historic moment for global AI governance.',
-    timestamps:[
-      {t:'0:00',d:'Leaders arrive at signing ceremony — Sicily summit venue'},
-      {t:'1:00',d:'Italian PM Meloni hosts and delivers opening address'},
-      {t:'2:00',d:'Framework provisions outlined — key restrictions announced'},
-      {t:'3:00',d:'Signing ceremony — all seven leaders sign the document'},
-      {t:'4:10',d:'Group photo — historic moment for AI governance'},
-      {t:'5:00',d:'Joint press conference — questions from international media'},
-    ]
-  },
+      {
+        id: 7, category: 'politics', title: 'UN Security Council Emergency Session: Gaza Ceasefire Resolution Passes',
+        date: '2025-08-08', duration: '5:20', exclusive: true,
+        formats: ['4K', '1080p', '720p'],
+        tags: ['UN', 'Security Council', 'Ceasefire', 'Gaza', 'Diplomacy'],
+        desc: 'The United Nations Security Council convenes an emergency session and votes 14-0 with one abstention to adopt Resolution 2784, calling for an immediate and permanent ceasefire in Gaza. The US ends months of vetoes with its support. Full session footage including closing statements from all 15 member states.',
+        timestamps: [
+          { t: '0:00', d: 'Security Council chamber — delegates take seats, media present' },
+          { t: '0:40', d: 'Secretary-General Guterres opening statement on humanitarian crisis' },
+          { t: '1:30', d: 'US Ambassador\'s address — historic shift in position explained' },
+          { t: '2:10', d: 'French and UK representatives speak in support of resolution' },
+          { t: '2:55', d: 'Vote called — 14-0 in favor, one abstention' },
+          { t: '3:30', d: 'Resolution declared adopted — immediate ceasefire ordered' },
+          { t: '4:10', d: 'Reaction from Israeli and Palestinian observer missions' },
+          { t: '4:50', d: 'Press conference outside chamber — world leaders react' },
+        ]
+      },
+      {
+        id: 8, category: 'politics', title: 'US Presidential Debate: Harris vs DeSantis — Key Exchange Moments',
+        date: '2025-07-22', duration: '10:00', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['US Politics', 'Presidential Debate', 'Harris', 'DeSantis', '2026 Election'],
+        desc: 'Highlights from the first major 2026 presidential debate held at the Reagan Library. A 90-minute debate that produced multiple viral moments including a heated exchange on immigration policy, healthcare costs, and foreign policy in the Pacific.',
+        timestamps: [
+          { t: '0:00', d: 'Candidates enter stage — opening handshake and positions' },
+          { t: '0:45', d: 'Opening statements — Harris on economic record' },
+          { t: '1:30', d: 'DeSantis immigration attack — Harris rebuttal' },
+          { t: '3:10', d: 'Healthcare flashpoint — both candidates trade statistics' },
+          { t: '5:00', d: 'Taiwan question — significant difference in positions emerges' },
+          { t: '7:20', d: 'Climate policy exchange — Harris calls for binding commitments' },
+          { t: '8:45', d: 'Closing statements — DeSantis pledges tax cuts' },
+          { t: '9:30', d: 'Post-debate analysis and immediate reaction polls' },
+        ]
+      },
+      {
+        id: 9, category: 'politics', title: 'G7 Summit Communiqué: AI Governance Framework Signed by All Leaders',
+        date: '2025-08-01', duration: '6:00', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['G7', 'AI Regulation', 'International Policy', 'Tech Governance'],
+        desc: 'Leaders of the G7 nations sign the Hiroshima AI Process Framework at the Taormina Summit in Sicily, establishing binding international standards for frontier AI development, deployment restrictions, and mandatory safety evaluations. Historic moment for global AI governance.',
+        timestamps: [
+          { t: '0:00', d: 'Leaders arrive at signing ceremony — Sicily summit venue' },
+          { t: '1:00', d: 'Italian PM Meloni hosts and delivers opening address' },
+          { t: '2:00', d: 'Framework provisions outlined — key restrictions announced' },
+          { t: '3:00', d: 'Signing ceremony — all seven leaders sign the document' },
+          { t: '4:10', d: 'Group photo — historic moment for AI governance' },
+          { t: '5:00', d: 'Joint press conference — questions from international media' },
+        ]
+      },
 
-  {
-    id:10, category:'entertainment', title:'Cannes Film Festival: Palme d\'Or Winner Announced — Full Ceremony',
-    date:'2025-05-25', duration:'7:30', exclusive:true,
-    formats:['4K','1080p','720p'],
-    tags:['Cannes','Cinema','Film Festival','Palme d\'Or','Awards'],
-    desc:'The 78th Cannes Film Festival closing ceremony and Palme d\'Or announcement. Jury president Pedro Almodóvar presents the top prize to Iranian director Maryam Rostami for her film "The Weight of Salt" — a surprise winner that drew a standing ovation from the Grand Théâtre Lumière.',
-    timestamps:[
-      {t:'0:00',d:'Red carpet arrivals — stars on the Palais des Festivals steps'},
-      {t:'1:00',d:'Opening of ceremony — host welcomes jury and audience'},
-      {t:'1:45',d:'Technical prizes awarded — sound design, costume design'},
-      {t:'2:30',d:'Best Screenplay — Japanese film "A Thousand Cuts"'},
-      {t:'3:15',d:'Best Director — Wes Anderson, warmly received'},
-      {t:'4:20',d:'Grand Prix — Danish ensemble drama announced'},
-      {t:'5:30',d:'Palme d\'Or announcement — Almodóvar at the podium'},
-      {t:'5:55',d:'Maryam Rostami accepts award — emotional 4-minute speech'},
-      {t:'7:00',d:'Closing ceremony and fireworks over the Croisette'},
-    ]
-  },
-  {
-    id:11, category:'entertainment', title:'Taylor Swift Eras Tour: Record-Breaking Tokyo Finale — Backstage Access',
-    date:'2025-07-15', duration:'8:00', exclusive:true,
-    formats:['4K','1080p'],
-    tags:['Taylor Swift','Eras Tour','Concert','Tokyo','Music'],
-    desc:'Exclusive backstage access and full-length highlights from Taylor Swift\'s record-breaking Tokyo Dome finale, the last date of the highest-grossing concert tour in music history. Over 55,000 fans attended each of the five Tokyo nights.',
-    timestamps:[
-      {t:'0:00',d:'Backstage pre-show — crew preparations and stage setup timelapse'},
-      {t:'0:50',d:'Taylor Swift arrives at venue — team briefing'},
-      {t:'1:30',d:'Show opens — pyrotechnics and "Miss Americana" opener'},
-      {t:'2:30',d:'Eras transition — "1989" era, fan crowd footage'},
-      {t:'3:30',d:'Surprise songs segment — two acoustic performances'},
-      {t:'4:40',d:'Midnights era — spectacular LED production'},
-      {t:'5:50',d:'Final song — "Long Live" with confetti explosion'},
-      {t:'6:30',d:'Backstage after show — Swift thanks crew and team'},
-      {t:'7:30',d:'Fan reaction outside venue — scenes across Tokyo'},
-    ]
-  },
-  {
-    id:12, category:'entertainment', title:'Emmy Awards 2025: Best Drama Upset — Full Winners List & Reactions',
-    date:'2025-09-22', duration:'5:45', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['Emmy Awards','Television','Drama','Awards Season','Hollywood'],
-    desc:'The 77th Emmy Awards deliver one of the biggest upsets in recent awards history as "The Bear: Season 4" sweeps the drama categories, claiming Best Drama Series, Best Actor, and Best Actress — all three previously considered locked up by "Succession" creator\'s new HBO project.',
-    timestamps:[
-      {t:'0:00',d:'Arrivals on the purple carpet — fashion highlights'},
-      {t:'0:45',d:'Ceremony opens — host\'s monologue featuring streaming jokes'},
-      {t:'1:30',d:'Comedy categories — "Abbott Elementary" wins again'},
-      {t:'2:20',d:'Limited series — "Shōgun Season 2" dominates'},
-      {t:'3:10',d:'Best Drama Actor — upset win, crowd gasps'},
-      {t:'3:50',d:'Best Drama Actress — "The Bear" actress\'s emotional speech'},
-      {t:'4:30',d:'Best Drama Series — "The Bear" wins, showrunner speech'},
-      {t:'5:10',d:'Backstage press room — cast and crew interviews'},
-    ]
-  },
+      {
+        id: 10, category: 'entertainment', title: 'Cannes Film Festival: Palme d\'Or Winner Announced — Full Ceremony',
+        date: '2025-05-25', duration: '7:30', exclusive: true,
+        formats: ['4K', '1080p', '720p'],
+        tags: ['Cannes', 'Cinema', 'Film Festival', 'Palme d\'Or', 'Awards'],
+        desc: 'The 78th Cannes Film Festival closing ceremony and Palme d\'Or announcement. Jury president Pedro Almodóvar presents the top prize to Iranian director Maryam Rostami for her film "The Weight of Salt" — a surprise winner that drew a standing ovation from the Grand Théâtre Lumière.',
+        timestamps: [
+          { t: '0:00', d: 'Red carpet arrivals — stars on the Palais des Festivals steps' },
+          { t: '1:00', d: 'Opening of ceremony — host welcomes jury and audience' },
+          { t: '1:45', d: 'Technical prizes awarded — sound design, costume design' },
+          { t: '2:30', d: 'Best Screenplay — Japanese film "A Thousand Cuts"' },
+          { t: '3:15', d: 'Best Director — Wes Anderson, warmly received' },
+          { t: '4:20', d: 'Grand Prix — Danish ensemble drama announced' },
+          { t: '5:30', d: 'Palme d\'Or announcement — Almodóvar at the podium' },
+          { t: '5:55', d: 'Maryam Rostami accepts award — emotional 4-minute speech' },
+          { t: '7:00', d: 'Closing ceremony and fireworks over the Croisette' },
+        ]
+      },
+      {
+        id: 11, category: 'entertainment', title: 'Taylor Swift Eras Tour: Record-Breaking Tokyo Finale — Backstage Access',
+        date: '2025-07-15', duration: '8:00', exclusive: true,
+        formats: ['4K', '1080p'],
+        tags: ['Taylor Swift', 'Eras Tour', 'Concert', 'Tokyo', 'Music'],
+        desc: 'Exclusive backstage access and full-length highlights from Taylor Swift\'s record-breaking Tokyo Dome finale, the last date of the highest-grossing concert tour in music history. Over 55,000 fans attended each of the five Tokyo nights.',
+        timestamps: [
+          { t: '0:00', d: 'Backstage pre-show — crew preparations and stage setup timelapse' },
+          { t: '0:50', d: 'Taylor Swift arrives at venue — team briefing' },
+          { t: '1:30', d: 'Show opens — pyrotechnics and "Miss Americana" opener' },
+          { t: '2:30', d: 'Eras transition — "1989" era, fan crowd footage' },
+          { t: '3:30', d: 'Surprise songs segment — two acoustic performances' },
+          { t: '4:40', d: 'Midnights era — spectacular LED production' },
+          { t: '5:50', d: 'Final song — "Long Live" with confetti explosion' },
+          { t: '6:30', d: 'Backstage after show — Swift thanks crew and team' },
+          { t: '7:30', d: 'Fan reaction outside venue — scenes across Tokyo' },
+        ]
+      },
+      {
+        id: 12, category: 'entertainment', title: 'Emmy Awards 2025: Best Drama Upset — Full Winners List & Reactions',
+        date: '2025-09-22', duration: '5:45', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['Emmy Awards', 'Television', 'Drama', 'Awards Season', 'Hollywood'],
+        desc: 'The 77th Emmy Awards deliver one of the biggest upsets in recent awards history as "The Bear: Season 4" sweeps the drama categories, claiming Best Drama Series, Best Actor, and Best Actress — all three previously considered locked up by "Succession" creator\'s new HBO project.',
+        timestamps: [
+          { t: '0:00', d: 'Arrivals on the purple carpet — fashion highlights' },
+          { t: '0:45', d: 'Ceremony opens — host\'s monologue featuring streaming jokes' },
+          { t: '1:30', d: 'Comedy categories — "Abbott Elementary" wins again' },
+          { t: '2:20', d: 'Limited series — "Shōgun Season 2" dominates' },
+          { t: '3:10', d: 'Best Drama Actor — upset win, crowd gasps' },
+          { t: '3:50', d: 'Best Drama Actress — "The Bear" actress\'s emotional speech' },
+          { t: '4:30', d: 'Best Drama Series — "The Bear" wins, showrunner speech' },
+          { t: '5:10', d: 'Backstage press room — cast and crew interviews' },
+        ]
+      },
 
-  {
-    id:13, category:'breaking', title:'8.4 Magnitude Earthquake Strikes Northern Japan — Emergency Response',
-    date:'2025-08-10', duration:'6:00', exclusive:false,
-    formats:['4K','1080p','720p'],
-    tags:['Earthquake','Japan','Breaking News','Emergency','Tsunami'],
-    desc:'Breaking coverage of the 8.4 magnitude earthquake that struck 120km off the coast of Hokkaido at 03:14 JST. Tsunami warnings were issued for the entire Pacific Rim. Japanese Self-Defence Forces deployed 15,000 troops within 2 hours. Initial reports indicate significant structural damage in coastal areas.',
-    timestamps:[
-      {t:'0:00',d:'Breaking — alert systems activate across Japan'},
-      {t:'0:30',d:'Seismograph data and epicentre location analysis'},
-      {t:'1:00',d:'Satellite imagery of affected coastal areas'},
-      {t:'1:45',d:'JMA press conference — tsunami wave height estimates'},
-      {t:'2:30',d:'Evacuation footage — residents moving to high ground'},
-      {t:'3:20',d:'First aerial footage of damage in Hokkaido coastal towns'},
-      {t:'4:10',d:'JSDF deployment — military response begins'},
-      {t:'5:00',d:'International response — US Pacific Fleet on standby'},
-      {t:'5:30',d:'Casualty and damage update from government spokesman'},
-    ]
-  },
-  {
-    id:14, category:'breaking', title:'Amazon Rainforest Record Fires: 40% Above Last Year — Aerial Survey',
-    date:'2025-08-06', duration:'4:30', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['Amazon','Fires','Climate','Brazil','Environment'],
-    desc:'Aerial survey footage from INPE and international monitoring teams showing the extent of the 2025 Amazon fire season, which by August had already burned 40% more land area than the same period in 2024. Scientists warn this could be a tipping point for the rainforest ecosystem.',
-    timestamps:[
-      {t:'0:00',d:'Aerial flyover — smoke plumes visible from 10,000 feet'},
-      {t:'0:45',d:'Ground-level footage — firefighters battling active blazes'},
-      {t:'1:30',d:'INPE satellite comparison — 2024 vs 2025 burn maps'},
-      {t:'2:15',d:'Interview with leading Amazon ecologist on tipping points'},
-      {t:'3:00',d:'Indigenous community footage — Yanomami leaders speak'},
-      {t:'3:45',d:'Brazilian government response — emergency measures announced'},
-    ]
-  },
-  {
-    id:15, category:'breaking', title:'Major Tech IPO Collapses: Three Unicorns Withdraw Listings in 48 Hours',
-    date:'2025-08-03', duration:'4:00', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['IPO','Stock Market','Tech','Finance','Breaking'],
-    desc:'Three of Silicon Valley\'s most-anticipated IPOs — Databricks, Stripe, and Anduril — simultaneously withdraw their S-1 filings citing "adverse market conditions" after AI-sector valuations contract by 23% in a two-week selloff. Wall Street analysts describe the moment as a "valuation reset."',
-    timestamps:[
-      {t:'0:00',d:'NYSE opening bell — tech stocks in freefall'},
-      {t:'0:40',d:'Databricks withdrawal announcement — CEO statement'},
-      {t:'1:20',d:'Stripe follows within hours — second major withdrawal'},
-      {t:'2:00',d:'Market reaction — NASDAQ composite loses 3.2%'},
-      {t:'2:40',d:'Analyst reaction from Goldman Sachs and Morgan Stanley'},
-      {t:'3:20',d:'Anduril withdrawal confirmed — defense-tech sector hit'},
-    ]
-  },
+      {
+        id: 13, category: 'breaking', title: '8.4 Magnitude Earthquake Strikes Northern Japan — Emergency Response',
+        date: '2025-08-10', duration: '6:00', exclusive: false,
+        formats: ['4K', '1080p', '720p'],
+        tags: ['Earthquake', 'Japan', 'Breaking News', 'Emergency', 'Tsunami'],
+        desc: 'Breaking coverage of the 8.4 magnitude earthquake that struck 120km off the coast of Hokkaido at 03:14 JST. Tsunami warnings were issued for the entire Pacific Rim. Japanese Self-Defence Forces deployed 15,000 troops within 2 hours. Initial reports indicate significant structural damage in coastal areas.',
+        timestamps: [
+          { t: '0:00', d: 'Breaking — alert systems activate across Japan' },
+          { t: '0:30', d: 'Seismograph data and epicentre location analysis' },
+          { t: '1:00', d: 'Satellite imagery of affected coastal areas' },
+          { t: '1:45', d: 'JMA press conference — tsunami wave height estimates' },
+          { t: '2:30', d: 'Evacuation footage — residents moving to high ground' },
+          { t: '3:20', d: 'First aerial footage of damage in Hokkaido coastal towns' },
+          { t: '4:10', d: 'JSDF deployment — military response begins' },
+          { t: '5:00', d: 'International response — US Pacific Fleet on standby' },
+          { t: '5:30', d: 'Casualty and damage update from government spokesman' },
+        ]
+      },
+      {
+        id: 14, category: 'breaking', title: 'Amazon Rainforest Record Fires: 40% Above Last Year — Aerial Survey',
+        date: '2025-08-06', duration: '4:30', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['Amazon', 'Fires', 'Climate', 'Brazil', 'Environment'],
+        desc: 'Aerial survey footage from INPE and international monitoring teams showing the extent of the 2025 Amazon fire season, which by August had already burned 40% more land area than the same period in 2024. Scientists warn this could be a tipping point for the rainforest ecosystem.',
+        timestamps: [
+          { t: '0:00', d: 'Aerial flyover — smoke plumes visible from 10,000 feet' },
+          { t: '0:45', d: 'Ground-level footage — firefighters battling active blazes' },
+          { t: '1:30', d: 'INPE satellite comparison — 2024 vs 2025 burn maps' },
+          { t: '2:15', d: 'Interview with leading Amazon ecologist on tipping points' },
+          { t: '3:00', d: 'Indigenous community footage — Yanomami leaders speak' },
+          { t: '3:45', d: 'Brazilian government response — emergency measures announced' },
+        ]
+      },
+      {
+        id: 15, category: 'breaking', title: 'Major Tech IPO Collapses: Three Unicorns Withdraw Listings in 48 Hours',
+        date: '2025-08-03', duration: '4:00', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['IPO', 'Stock Market', 'Tech', 'Finance', 'Breaking'],
+        desc: 'Three of Silicon Valley\'s most-anticipated IPOs — Databricks, Stripe, and Anduril — simultaneously withdraw their S-1 filings citing "adverse market conditions" after AI-sector valuations contract by 23% in a two-week selloff. Wall Street analysts describe the moment as a "valuation reset."',
+        timestamps: [
+          { t: '0:00', d: 'NYSE opening bell — tech stocks in freefall' },
+          { t: '0:40', d: 'Databricks withdrawal announcement — CEO statement' },
+          { t: '1:20', d: 'Stripe follows within hours — second major withdrawal' },
+          { t: '2:00', d: 'Market reaction — NASDAQ composite loses 3.2%' },
+          { t: '2:40', d: 'Analyst reaction from Goldman Sachs and Morgan Stanley' },
+          { t: '3:20', d: 'Anduril withdrawal confirmed — defense-tech sector hit' },
+        ]
+      },
 
-  {
-    id:16, category:'business', title:'OpenAI GPT-6 Announced: Real-Time Video Understanding & Reasoning Leap',
-    date:'2025-08-08', duration:'5:00', exclusive:true,
-    formats:['4K','1080p','720p'],
-    tags:['OpenAI','GPT-6','AI','Technology','Product Launch'],
-    desc:'OpenAI CEO Sam Altman unveils GPT-6 at a San Francisco press event, demonstrating real-time video understanding, PhD-level scientific reasoning, and a 2 million token context window. The model processes and generates video natively and is available to enterprise customers immediately.',
-    timestamps:[
-      {t:'0:00',d:'Sam Altman takes the stage — welcome and context setting'},
-      {t:'0:30',d:'GPT-6 capability overview — key benchmarks presented'},
-      {t:'1:10',d:'Live demo: real-time video understanding of live camera feed'},
-      {t:'2:00',d:'Scientific reasoning demo — solving novel protein folding problem'},
-      {t:'2:45',d:'Video generation — 60-second photorealistic video from text'},
-      {t:'3:30',d:'Enterprise pricing and API availability announced'},
-      {t:'4:10',d:'Q&A — safety measures and compute requirements addressed'},
-    ]
-  },
-  {
-    id:17, category:'business', title:'Saudi Aramco Q2 2025: Record $58B Profit Amid Oil Price Surge',
-    date:'2025-08-05', duration:'4:00', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['Aramco','Saudi Arabia','Oil','Finance','Energy'],
-    desc:'Saudi Aramco reports a record quarterly profit of $58 billion for Q2 2025, driven by Brent crude averaging $98/barrel and the successful commissioning of three new offshore production facilities. The company raises its full-year dividend by 12% and announces a $40B share buyback program.',
-    timestamps:[
-      {t:'0:00',d:'Aramco HQ — media set up for earnings announcement'},
-      {t:'0:40',d:'CEO Amin Nasser presents Q2 results — headline figures'},
-      {t:'1:20',d:'Production breakdown — upstream and downstream performance'},
-      {t:'2:00',d:'Dividend announcement — 12% increase from prior year'},
-      {t:'2:40',d:'Capital expenditure plans — 2026 investment targets'},
-      {t:'3:20',d:'Analyst Q&A session — sustainability and transition questions'},
-    ]
-  },
-  {
-    id:18, category:'business', title:'EU Digital Markets Act: Apple Faces €3.4B Fine for App Store Non-Compliance',
-    date:'2025-07-28', duration:'4:45', exclusive:false,
-    formats:['1080p','720p'],
-    tags:['EU','Apple','DMA','Regulation','Tech Law','Fine'],
-    desc:'The European Commission announces a €3.4 billion fine against Apple for failing to comply with the Digital Markets Act\'s interoperability requirements. This is the largest ever DMA penalty and sets a precedent for enforcement against Big Tech gatekeepers. Apple announces it will appeal.',
-    timestamps:[
-      {t:'0:00',d:'European Commission building — press conference setup'},
-      {t:'0:35',d:'Commissioner Vestager announces the record fine'},
-      {t:'1:10',d:'Legal basis explained — specific DMA provisions violated'},
-      {t:'1:50',d:'Apple\'s response statement read by spokesperson'},
-      {t:'2:30',d:'Industry reaction — developer community response'},
-      {t:'3:10',d:'Legal experts analysis — appeal prospects discussed'},
-      {t:'4:00',d:'Market reaction — Apple shares drop 2.4% in extended trading'},
-    ]
-  }
-];
+      {
+        id: 16, category: 'business', title: 'OpenAI GPT-6 Announced: Real-Time Video Understanding & Reasoning Leap',
+        date: '2025-08-08', duration: '5:00', exclusive: true,
+        formats: ['4K', '1080p', '720p'],
+        tags: ['OpenAI', 'GPT-6', 'AI', 'Technology', 'Product Launch'],
+        desc: 'OpenAI CEO Sam Altman unveils GPT-6 at a San Francisco press event, demonstrating real-time video understanding, PhD-level scientific reasoning, and a 2 million token context window. The model processes and generates video natively and is available to enterprise customers immediately.',
+        timestamps: [
+          { t: '0:00', d: 'Sam Altman takes the stage — welcome and context setting' },
+          { t: '0:30', d: 'GPT-6 capability overview — key benchmarks presented' },
+          { t: '1:10', d: 'Live demo: real-time video understanding of live camera feed' },
+          { t: '2:00', d: 'Scientific reasoning demo — solving novel protein folding problem' },
+          { t: '2:45', d: 'Video generation — 60-second photorealistic video from text' },
+          { t: '3:30', d: 'Enterprise pricing and API availability announced' },
+          { t: '4:10', d: 'Q&A — safety measures and compute requirements addressed' },
+        ]
+      },
+      {
+        id: 17, category: 'business', title: 'Saudi Aramco Q2 2025: Record $58B Profit Amid Oil Price Surge',
+        date: '2025-08-05', duration: '4:00', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['Aramco', 'Saudi Arabia', 'Oil', 'Finance', 'Energy'],
+        desc: 'Saudi Aramco reports a record quarterly profit of $58 billion for Q2 2025, driven by Brent crude averaging $98/barrel and the successful commissioning of three new offshore production facilities. The company raises its full-year dividend by 12% and announces a $40B share buyback program.',
+        timestamps: [
+          { t: '0:00', d: 'Aramco HQ — media set up for earnings announcement' },
+          { t: '0:40', d: 'CEO Amin Nasser presents Q2 results — headline figures' },
+          { t: '1:20', d: 'Production breakdown — upstream and downstream performance' },
+          { t: '2:00', d: 'Dividend announcement — 12% increase from prior year' },
+          { t: '2:40', d: 'Capital expenditure plans — 2026 investment targets' },
+          { t: '3:20', d: 'Analyst Q&A session — sustainability and transition questions' },
+        ]
+      },
+      {
+        id: 18, category: 'business', title: 'EU Digital Markets Act: Apple Faces €3.4B Fine for App Store Non-Compliance',
+        date: '2025-07-28', duration: '4:45', exclusive: false,
+        formats: ['1080p', '720p'],
+        tags: ['EU', 'Apple', 'DMA', 'Regulation', 'Tech Law', 'Fine'],
+        desc: 'The European Commission announces a €3.4 billion fine against Apple for failing to comply with the Digital Markets Act\'s interoperability requirements. This is the largest ever DMA penalty and sets a precedent for enforcement against Big Tech gatekeepers. Apple announces it will appeal.',
+        timestamps: [
+          { t: '0:00', d: 'European Commission building — press conference setup' },
+          { t: '0:35', d: 'Commissioner Vestager announces the record fine' },
+          { t: '1:10', d: 'Legal basis explained — specific DMA provisions violated' },
+          { t: '1:50', d: 'Apple\'s response statement read by spokesperson' },
+          { t: '2:30', d: 'Industry reaction — developer community response' },
+          { t: '3:10', d: 'Legal experts analysis — appeal prospects discussed' },
+          { t: '4:00', d: 'Market reaction — Apple shares drop 2.4% in extended trading' },
+        ]
+      }
+    ];
 
-let activeCategory = 'all';
-let activeFormat = 'all';
-let searchQuery = '';
-let sortOrder = 'latest';
+    let activeCategory = 'all';
+    let activeFormat = 'all';
+    let searchQuery = '';
+    let sortOrder = 'latest';
 
-function getFiltered() {
-  let result = [...VIDEOS];
-  if (activeCategory !== 'all') result = result.filter(v => v.category === activeCategory);
-  if (activeFormat === '4k') result = result.filter(v => v.formats.includes('4K'));
-  if (activeFormat === '1080p') result = result.filter(v => v.formats.includes('1080p'));
-  if (activeFormat === '720p') result = result.filter(v => v.formats.includes('720p'));
-  if (activeFormat === 'exclusive') result = result.filter(v => v.exclusive);
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    result = result.filter(v => v.title.toLowerCase().includes(q) || v.desc.toLowerCase().includes(q) || v.tags.some(t => t.toLowerCase().includes(q)));
-  }
-  if (sortOrder === 'latest') result.sort((a,b) => new Date(b.date) - new Date(a.date));
-  if (sortOrder === 'oldest') result.sort((a,b) => new Date(a.date) - new Date(b.date));
-  if (sortOrder === 'az') result.sort((a,b) => a.title.localeCompare(b.title));
-  return result;
-}
+    function getFiltered() {
+      let result = [...VIDEOS];
+      if (activeCategory !== 'all') result = result.filter(v => v.category === activeCategory);
+      if (activeFormat === '4k') result = result.filter(v => v.formats.includes('4K'));
+      if (activeFormat === '1080p') result = result.filter(v => v.formats.includes('1080p'));
+      if (activeFormat === '720p') result = result.filter(v => v.formats.includes('720p'));
+      if (activeFormat === 'exclusive') result = result.filter(v => v.exclusive);
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        result = result.filter(v => v.title.toLowerCase().includes(q) || v.desc.toLowerCase().includes(q) || v.tags.some(t => t.toLowerCase().includes(q)));
+      }
+      if (sortOrder === 'latest') result.sort((a, b) => new Date(b.date) - new Date(a.date));
+      if (sortOrder === 'oldest') result.sort((a, b) => new Date(a.date) - new Date(b.date));
+      if (sortOrder === 'az') result.sort((a, b) => a.title.localeCompare(b.title));
+      return result;
+    }
 
-const THUMB_COLORS = {
-  sports: 'linear-gradient(135deg, #1a0a0a 0%, #2d0f0f 100%)',
-  politics: 'linear-gradient(135deg, #0a0a1a 0%, #0f0f2d 100%)',
-  entertainment: 'linear-gradient(135deg, #1a0a1a 0%, #2d0f2d 100%)',
-  breaking: 'linear-gradient(135deg, #1a0805 0%, #2d1408 100%)',
-  business: 'linear-gradient(135deg, #0a1a0a 0%, #0f2d0f 100%)',
-};
+    const THUMB_COLORS = {
+      sports: 'linear-gradient(135deg, #1a0a0a 0%, #2d0f0f 100%)',
+      politics: 'linear-gradient(135deg, #0a0a1a 0%, #0f0f2d 100%)',
+      entertainment: 'linear-gradient(135deg, #1a0a1a 0%, #2d0f2d 100%)',
+      breaking: 'linear-gradient(135deg, #1a0805 0%, #2d1408 100%)',
+      business: 'linear-gradient(135deg, #0a1a0a 0%, #0f2d0f 100%)',
+    };
 
-const CAT_ICONS = {
-  sports:'⚽', politics:'🏛', entertainment:'🎬', breaking:'🔴', business:'💼'
-};
+    const CAT_ICONS = {
+      sports: '⚽', politics: '🏛', entertainment: '🎬', breaking: '🔴', business: '💼'
+    };
 
-function renderCards() {
-  const filtered = getFiltered();
-  const grid = document.getElementById('video-grid');
-  const noRes = document.getElementById('no-results');
-  document.getElementById('result-count').textContent = filtered.length;
+    function renderCards() {
+      const filtered = getFiltered();
+      const grid = document.getElementById('video-grid');
+      const noRes = document.getElementById('no-results');
+      document.getElementById('result-count').textContent = filtered.length;
 
-  if (filtered.length === 0) {
-    grid.innerHTML = ''; noRes.style.display = 'block'; return;
-  }
-  noRes.style.display = 'none';
-  grid.innerHTML = filtered.map(v => `
+      if (filtered.length === 0) {
+        grid.innerHTML = ''; noRes.style.display = 'block'; return;
+      }
+      noRes.style.display = 'none';
+      grid.innerHTML = filtered.map(v => `
     <div class="video-card" onclick="openModal(${v.id})">
       <div class="video-thumb">
         <div style="width:100%;height:100%;background:${THUMB_COLORS[v.category] || '#111'};display:flex;align-items:center;justify-content:center;position:relative;">
@@ -755,7 +1963,7 @@ function renderCards() {
           <div class="meta-sep"></div>
           <span>${v.timestamps.length} timestamps</span>
         </div>
-        <div class="card-tags">${v.tags.slice(0,3).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        <div class="card-tags">${v.tags.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('')}</div>
       </div>
       <div class="card-footer">
         <div class="card-res-tags">${v.formats.map(f => `<span class="res-tag">${f}</span>`).join('')}</div>
@@ -766,54 +1974,54 @@ function renderCards() {
       </div>
     </div>
   `).join('');
-}
+    }
 
-function formatDate(d) {
-  const date = new Date(d);
-  return date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-}
+    function formatDate(d) {
+      const date = new Date(d);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 
-function filterCategory(cat) {
-  activeCategory = cat;
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('cat-' + cat).classList.add('active');
-  renderCards();
-}
-function filterDate(d) {
-  document.querySelectorAll('[id^="date-"]').forEach(b => b.classList.remove('active'));
-  document.getElementById('date-' + d).classList.add('active');
-  renderCards();
-}
-function filterFormat(fmt) {
-  activeFormat = fmt;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  event.target.classList.add('active');
-  renderCards();
-}
-function sortVideos() {
-  sortOrder = document.getElementById('sort-select').value;
-  renderCards();
-}
-function doSearch() {
-  searchQuery = document.getElementById('search-input').value.trim();
-  renderCards();
-}
-document.getElementById('search-input').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
+    function filterCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('cat-' + cat).classList.add('active');
+      renderCards();
+    }
+    function filterDate(d) {
+      document.querySelectorAll('[id^="date-"]').forEach(b => b.classList.remove('active'));
+      document.getElementById('date-' + d).classList.add('active');
+      renderCards();
+    }
+    function filterFormat(fmt) {
+      activeFormat = fmt;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      renderCards();
+    }
+    function sortVideos() {
+      sortOrder = document.getElementById('sort-select').value;
+      renderCards();
+    }
+    function doSearch() {
+      searchQuery = document.getElementById('search-input').value.trim();
+      renderCards();
+    }
+    document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 
-// MODAL
-let currentVideo = null;
-let selectedRes = '4K', selectedAspect = '16:9', watermarkOn = false;
+    // MODAL
+    let currentVideo = null;
+    let selectedRes = '4K', selectedAspect = '16:9', watermarkOn = false;
 
-function openModal(id) {
-  currentVideo = VIDEOS.find(v => v.id === id);
-  if (!currentVideo) return;
+    function openModal(id) {
+      currentVideo = VIDEOS.find(v => v.id === id);
+      if (!currentVideo) return;
 
-  selectedRes = currentVideo.formats[0];
-  selectedAspect = '16:9';
-  watermarkOn = false;
+      selectedRes = currentVideo.formats[0];
+      selectedAspect = '16:9';
+      watermarkOn = false;
 
-  const body = document.getElementById('modal-body');
-  body.innerHTML = `
+      const body = document.getElementById('modal-body');
+      body.innerHTML = `
     <div class="modal-header">
       <div class="modal-title">${currentVideo.title}</div>
       <div class="modal-category">${currentVideo.category.toUpperCase()}</div>
@@ -849,7 +2057,7 @@ function openModal(id) {
         <div class="dl-group">
           <label>Resolution</label>
           <div class="dl-options" id="res-opts">
-            ${currentVideo.formats.map((f,i) => `<button class="dl-opt ${i===0?'selected':''}" onclick="selectRes('${f}',this)">${f}</button>`).join('')}
+            ${currentVideo.formats.map((f, i) => `<button class="dl-opt ${i === 0 ? 'selected' : ''}" onclick="selectRes('${f}',this)">${f}</button>`).join('')}
           </div>
         </div>
         <div class="dl-group">
@@ -889,105 +2097,137 @@ function openModal(id) {
     </div>
   `;
 
-  document.getElementById('total-time').textContent = currentVideo.duration;
-  document.getElementById('progress-fill').style.width = '0%';
-  document.getElementById('current-time').textContent = '0:00';
+      document.getElementById('total-time').textContent = currentVideo.duration;
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('current-time').textContent = '0:00';
 
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
+      document.getElementById('modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function closeModalOutside(e) {
-  if (e.target === document.getElementById('modal')) closeModal();
-}
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeModalOutside(e) {
+      if (e.target === document.getElementById('modal')) closeModal();
+    }
 
-function seekTo(timeStr) {
-  document.getElementById('current-time').textContent = timeStr;
-  const parts = timeStr.split(':');
-  const secs = parseInt(parts[0])*60 + parseInt(parts[1]);
-  const total = currentVideo ? parseDuration(currentVideo.duration) : 600;
-  const pct = Math.min(100, (secs/total)*100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
+    function seekTo(timeStr) {
+      document.getElementById('current-time').textContent = timeStr;
+      const parts = timeStr.split(':');
+      const secs = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      const total = currentVideo ? parseDuration(currentVideo.duration) : 600;
+      const pct = Math.min(100, (secs / total) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
 
-function parseDuration(d) {
-  const p = d.split(':'); return parseInt(p[0])*60 + parseInt(p[1]);
-}
+    function parseDuration(d) {
+      const p = d.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]);
+    }
 
-function seekVideo(e) {
-  const bar = e.currentTarget;
-  const rect = bar.getBoundingClientRect();
-  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left)/rect.width));
-  document.getElementById('progress-fill').style.width = (pct*100)+'%';
-  if (currentVideo) {
-    const secs = Math.floor(pct * parseDuration(currentVideo.duration));
-    const m = Math.floor(secs/60), s = secs%60;
-    document.getElementById('current-time').textContent = m+':'+(s<10?'0':'')+s;
-  }
-}
+    function seekVideo(e) {
+      const bar = e.currentTarget;
+      const rect = bar.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      document.getElementById('progress-fill').style.width = (pct * 100) + '%';
+      if (currentVideo) {
+        const secs = Math.floor(pct * parseDuration(currentVideo.duration));
+        const m = Math.floor(secs / 60), s = secs % 60;
+        document.getElementById('current-time').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      }
+    }
 
-function togglePlay() {
-  const icon = document.getElementById('play-icon');
-  const isPlaying = icon.getAttribute('data-playing') === '1';
-  if (!isPlaying) {
-    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-    icon.setAttribute('data-playing','1');
-  } else {
-    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
-    icon.setAttribute('data-playing','0');
-  }
-}
+    function togglePlay() {
+      const icon = document.getElementById('play-icon');
+      const isPlaying = icon.getAttribute('data-playing') === '1';
+      if (!isPlaying) {
+        icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+        icon.setAttribute('data-playing', '1');
+      } else {
+        icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+        icon.setAttribute('data-playing', '0');
+      }
+    }
 
-function selectRes(r, btn) {
-  selectedRes = r;
-  document.querySelectorAll('#res-opts .dl-opt').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  updateSize();
-}
-function selectAspect(a, btn) {
-  selectedAspect = a;
-  document.querySelectorAll('#aspect-opts .dl-opt').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  updateSize();
-}
-function selectFmt(btn) {
-  btn.closest('.dl-options').querySelectorAll('.dl-opt').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-function toggleWatermark(el) {
-  watermarkOn = el.checked;
-  document.getElementById('player-wm').style.display = watermarkOn ? 'block' : 'none';
-}
-function getEstimatedSize() {
-  const sizes = {'4K':{'16:9':'4.2 GB','9:16':'4.5 GB','1:1':'3.8 GB','4:3':'4.0 GB'},'1080p':{'16:9':'1.1 GB','9:16':'1.2 GB','1:1':'980 MB','4:3':'1.05 GB'},'720p':{'16:9':'480 MB','9:16':'510 MB','1:1':'420 MB','4:3':'460 MB'}};
-  return (sizes[selectedRes]?.[selectedAspect]) || '1.1 GB';
-}
-function updateSize() {
-  const el = document.getElementById('dl-filesize');
-  if (el) el.textContent = 'Estimated size: ~' + getEstimatedSize();
-}
-function downloadVideo() {
-  const btn = document.querySelector('.dl-main-btn');
-  btn.textContent = '⏳ Preparing download...';
-  btn.style.opacity = '0.7';
-  setTimeout(() => {
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ready! Download started`;
-    btn.style.background = '#16a34a';
-    btn.style.opacity = '1';
-    setTimeout(() => {
-      btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download File`;
-      btn.style.background = '';
-    }, 3000);
-  }, 1500);
-}
+    function selectRes(r, btn) {
+      selectedRes = r;
+      document.querySelectorAll('#res-opts .dl-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      updateSize();
+    }
+    function selectAspect(a, btn) {
+      selectedAspect = a;
+      document.querySelectorAll('#aspect-opts .dl-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      updateSize();
+    }
+    function selectFmt(btn) {
+      btn.closest('.dl-options').querySelectorAll('.dl-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+    function toggleWatermark(el) {
+      watermarkOn = el.checked;
+      document.getElementById('player-wm').style.display = watermarkOn ? 'block' : 'none';
+    }
+    function getEstimatedSize() {
+      const sizes = { '4K': { '16:9': '4.2 GB', '9:16': '4.5 GB', '1:1': '3.8 GB', '4:3': '4.0 GB' }, '1080p': { '16:9': '1.1 GB', '9:16': '1.2 GB', '1:1': '980 MB', '4:3': '1.05 GB' }, '720p': { '16:9': '480 MB', '9:16': '510 MB', '1:1': '420 MB', '4:3': '460 MB' } };
+      return (sizes[selectedRes]?.[selectedAspect]) || '1.1 GB';
+    }
+    function updateSize() {
+      const el = document.getElementById('dl-filesize');
+      if (el) el.textContent = 'Estimated size: ~' + getEstimatedSize();
+    }
+    function downloadVideo() {
+      const btn = document.querySelector('.dl-main-btn');
+      btn.textContent = '⏳ Preparing download...';
+      btn.style.opacity = '0.7';
+      setTimeout(() => {
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ready! Download started`;
+        btn.style.background = '#16a34a';
+        btn.style.opacity = '1';
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download File`;
+          btn.style.background = '';
+        }, 3000);
+      }, 1500);
+    }
 
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-renderCards();
-</script>
+    // Nav: transparent → frosted glass on scroll
+    const navEl = document.getElementById('main-nav');
+    function handleNavScroll() {
+      if (navEl) navEl.classList.toggle('scrolled', window.scrollY > 40);
+    }
+    window.addEventListener('scroll', handleNavScroll, { passive: true });
+    handleNavScroll();
+
+    // Hamburger toggle
+    const toggle = document.getElementById('nav-toggle');
+    const drawer = document.getElementById('mob-drawer');
+
+    function closeDrawer() {
+      if (toggle && drawer) {
+        toggle.classList.remove('open');
+        drawer.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    if (toggle && drawer) {
+      toggle.addEventListener('click', () => {
+        const isOpen = toggle.classList.toggle('open');
+        drawer.classList.toggle('open', isOpen);
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      });
+      document.addEventListener('click', e => {
+        if (!e.target.closest('nav')) closeDrawer();
+      });
+    }
+
+    renderCards();
+  </script>
 </body>
+
 </html>
