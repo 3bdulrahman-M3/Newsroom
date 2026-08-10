@@ -210,11 +210,11 @@
       /* Hero Mobile Enhancements */
       .hero{padding:16px 16px 50px; min-height:auto;}
       .hero-title{
-        font-size: 82px !important;
-        line-height: 1.08 !important;
-        width: 100%;
-        max-width: 100%;
-        margin-top: 50px !important;
+        font-size: clamp(78px, 12vw, 82px) !important;
+  line-height: 1.08 !important;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 50px !important;
       }
       .hero-sub{
         font-size: 14px;
@@ -278,13 +278,15 @@
     }
 
     /* Mobile S ≤ 480px */
-    @media(max-width:480px){
-      .hero-title{font-size: 36px !important;}
-      .hero-sub{font-size:13.5px;}
-      .features-grid{border-radius:12px;}
-      .section-title{font-size:clamp(26px,7.5vw,36px);}
-      .cta-title{font-size:clamp(30px,8.5vw,46px);}
-      .hero-badge{font-size:10px;padding:5px 12px;margin-bottom:20px;}
+    @media(max-width:480px){.hero-title{
+    font-size: clamp(72px, 11vw, 68px) !important;
+    line-height: 1.05 !important;
+  }
+  .hero-sub{font-size:13.5px;}
+  .features-grid{border-radius:12px;}
+  .section-title{font-size:clamp(26px,7.5vw,36px);}
+  .cta-title{font-size:clamp(30px,8.5vw,46px);}
+  .hero-badge{font-size:10px;padding:5px 12px;margin-bottom:20px;}
     }
   </style>
 </head>
