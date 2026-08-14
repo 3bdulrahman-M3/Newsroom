@@ -1,149 +1,192 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Play, ArrowRight, Radio, Shield, Globe, Cpu, Download, CheckCircle2, Star, Zap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { VIDEOS } from '../data/videos';
+import { 
+  Play, Download, ShieldCheck, Cpu, ArrowUpRight, 
+  Tv2, TrendingUp, Sparkles, ArrowRight
+} from 'lucide-react';
 
 export default function Home() {
+  const navigate = useNavigate();
+  const featuredVideo = VIDEOS[0];
+  const topStreams = VIDEOS.slice(1, 7);
+
   return (
-    <div className="min-h-screen bg-[#080808] text-neutral-100 font-sans pt-20">
-      {/* HERO SECTION */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 py-20 overflow-hidden text-center">
-        {/* Background Glowing Gradients & Mesh */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(230,57,70,0.18)_0%,transparent_65%),radial-gradient(ellipse_50%_40%_at_80%_80%,rgba(230,57,70,0.08)_0%,transparent_60%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pt-16 pb-12">
+      <div className="max-w-7xl mx-auto px-6 pt-6 flex flex-col gap-8">
+        
+        {/* TOP HERO DASHBOARD BANNER */}
+        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-3xl p-8 md:p-10 text-white relative overflow-hidden shadow-xl">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/15 rounded-full filter blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 flex flex-col gap-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold w-fit">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                ENTERPRISE MEDIA HUB
+              </div>
 
-        {/* Hero Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#e63946]/10 border border-[#e63946]/30 text-[#e63946] text-xs font-bold uppercase tracking-widest mb-8 animate-pulse">
-          <span className="w-2 h-2 rounded-full bg-[#e63946]" />
-          Next-Gen Broadcast Distribution
+              <h1 className="font-['Bebas_Neue'] text-5xl sm:text-7xl tracking-wider leading-none">
+                BROADCAST-READY <br />
+                <span className="text-red-500">NEWS & SPORTS</span> DISTRIBUTION
+              </h1>
+
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-xl">
+                High-speed media wire for newsrooms and agencies. Download cleared 4K & 1080p footage with instant timestamps and multi-ratio exports.
+              </p>
+
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link
+                  to="/feed"
+                  className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl flex items-center gap-2 shadow-lg shadow-red-600/30 transition-all hover:scale-105"
+                >
+                  <Tv2 size={16} /> Access Live Media Feed <ArrowRight size={16} />
+                </Link>
+              </div>
+            </div>
+
+            {/* Featured Live Preview Widget */}
+            <div className="lg:col-span-5 bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 flex flex-col gap-4">
+              <div className="flex items-center justify-between text-xs text-slate-300 font-bold uppercase tracking-wider">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" /> Featured Wire Asset
+                </span>
+                <span className="text-red-400">4K HDR</span>
+              </div>
+
+              <div 
+                onClick={() => navigate(`/video/${featuredVideo.id}`)}
+                className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 border border-white/10 group cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent z-10" />
+                <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 group-hover:scale-110 transition-transform shadow-lg">
+                  <Play size={20} fill="currentColor" className="ml-0.5" />
+                </div>
+                <div className="absolute bottom-3 left-3 right-3 z-20">
+                  <span className="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
+                    {featuredVideo.category}
+                  </span>
+                  <h4 className="text-xs font-bold text-white mt-1 line-clamp-1">
+                    {featuredVideo.title}
+                  </h4>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-mono text-slate-300">
+                <div className="bg-white/5 p-2 rounded-lg">
+                  <span className="block text-slate-400 text-[9px] uppercase">Duration</span>
+                  {featuredVideo.duration}
+                </div>
+                <div className="bg-white/5 p-2 rounded-lg">
+                  <span className="block text-slate-400 text-[9px] uppercase">Markers</span>
+                  {featuredVideo.timestamps.length} Shots
+                </div>
+                <div className="bg-white/5 p-2 rounded-lg">
+                  <span className="block text-slate-400 text-[9px] uppercase">Format</span>
+                  {featuredVideo.formats[0]}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Hero Title */}
-        <h1 className="font-['Bebas_Neue'] text-6xl sm:text-8xl md:text-9xl tracking-wider leading-[0.95] max-w-5xl text-white">
-          THE ULTRA-FAST <br />
-          <span className="text-[#e63946]">VIDEO WIRE</span> FOR MEDIA
-        </h1>
-
-        <p className="text-neutral-400 text-base sm:text-lg max-w-2xl mt-6 leading-relaxed">
-          Instantly source, edit, brand, and license broadcast-ready video content across sports, breaking news, politics, and global entertainment.
-        </p>
-
-        {/* Hero CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 mt-10">
-          <Link
-            to="/feed"
-            className="w-full sm:w-auto bg-[#e63946] hover:bg-[#ff3a4a] text-white text-base font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-3 shadow-[0_12px_40px_rgba(230,57,70,0.4)] hover:-translate-y-0.5 transition-all group"
-          >
-            Launch Content Feed <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <a
-            href="#features"
-            className="w-full sm:w-auto border border-white/10 hover:border-white/30 text-neutral-300 hover:text-white font-medium px-8 py-4 rounded-xl transition-all"
-          >
-            Explore Platform Features
-          </a>
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 mt-16 pt-12 border-t border-white/10 max-w-4xl w-full">
-          <div>
-            <div className="font-['Bebas_Neue'] text-4xl sm:text-5xl text-white tracking-wider">
-              10K<span className="text-[#e63946]">+</span>
+        {/* METRICS & CAPABILITIES BAR */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+              <Tv2 size={24} />
             </div>
-            <div className="text-[11px] text-neutral-400 uppercase tracking-widest mt-1">Daily Clips</div>
-          </div>
-          <div>
-            <div className="font-['Bebas_Neue'] text-4xl sm:text-5xl text-white tracking-wider">
-              4K<span className="text-[#e63946]"> HDR</span>
+            <div>
+              <div className="text-xl font-black text-slate-900 font-mono">10,000+</div>
+              <div className="text-xs text-slate-500 font-semibold">Active Distribution Assets</div>
             </div>
-            <div className="text-[11px] text-neutral-400 uppercase tracking-widest mt-1">Master Quality</div>
-          </div>
-          <div>
-            <div className="font-['Bebas_Neue'] text-4xl sm:text-5xl text-white tracking-wider">
-              &lt; 5<span className="text-[#e63946]">s</span>
-            </div>
-            <div className="text-[11px] text-neutral-400 uppercase tracking-widest mt-1">Ingest Latency</div>
-          </div>
-          <div>
-            <div className="font-['Bebas_Neue'] text-4xl sm:text-5xl text-white tracking-wider">
-              100<span className="text-[#e63946]">%</span>
-            </div>
-            <div className="text-[11px] text-neutral-400 uppercase tracking-widest mt-1">Rights Cleared</div>
-          </div>
-        </div>
-      </section>
-
-      {/* TICKER MARQUEE */}
-      <div className="bg-[#e63946] py-3.5 overflow-hidden whitespace-nowrap flex select-none">
-        <div className="flex animate-marquee gap-10 text-xs font-black uppercase tracking-widest text-white">
-          <span>🔴 BREAKING NEWS FEEDS</span> • <span>⚽ CHAMPIONS LEAGUE EXCLUSIVES</span> • <span>🎬 HOLLYWOOD PREMIERES</span> • <span>⚡ REAL-TIME AI TRANSCRIPTION</span> • <span>📡 SATELLITE DIRECT INGEST</span> • <span>🔴 BREAKING NEWS FEEDS</span> • <span>⚽ CHAMPIONS LEAGUE EXCLUSIVES</span>
-        </div>
-      </div>
-
-      {/* FEATURES SECTION */}
-      <section id="features" className="py-24 px-6 max-w-6xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="text-[#e63946] text-xs font-bold uppercase tracking-widest mb-3 flex items-center justify-center gap-2">
-            <Zap size={14} /> Built For Broadcasters & Media Agencies
-          </div>
-          <h2 className="font-['Bebas_Neue'] text-5xl sm:text-6xl text-white tracking-wide">
-            ENTERPRISE VIDEO DISTRIBUTION
-          </h2>
-          <p className="text-neutral-400 text-base mt-4">
-            Everything your newsroom or creative team needs to publish broadcast-ready video instantly.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#111] border border-white/10 rounded-2xl p-8 hover:border-[#e63946]/50 transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-[#e63946]/10 border border-[#e63946]/30 text-[#e63946] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Radio size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Live Feed Ingestion</h3>
-            <p className="text-neutral-400 text-sm leading-relaxed">
-              Real-time streams directly from global news bureaus, sports stadiums, and entertainment red carpets with sub-second turnaround.
-            </p>
           </div>
 
-          <div className="bg-[#111] border border-white/10 rounded-2xl p-8 hover:border-[#e63946]/50 transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-[#e63946]/10 border border-[#e63946]/30 text-[#e63946] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
               <Cpu size={24} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">AI Timestamping & Tags</h3>
-            <p className="text-neutral-400 text-sm leading-relaxed">
-              Automated scene detection generates shot lists, spoken word transcripts, and face recognition markers in seconds.
-            </p>
-          </div>
-
-          <div className="bg-[#111] border border-white/10 rounded-2xl p-8 hover:border-[#e63946]/50 transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-[#e63946]/10 border border-[#e63946]/30 text-[#e63946] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Shield size={24} />
+            <div>
+              <div className="text-xl font-black text-slate-900 font-mono">&lt; 3 Secs</div>
+              <div className="text-xs text-slate-500 font-semibold">Instant Stream Ingest</div>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3">Instant Watermarking</h3>
-            <p className="text-neutral-400 text-sm leading-relaxed">
-              Export in multi-aspect formats (16:9, 9:16, 1:1) with custom network logos or REDWIRE verified digital signatures.
-            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <ShieldCheck size={24} />
+            </div>
+            <div>
+              <div className="text-xl font-black text-slate-900 font-mono">100% Cleared</div>
+              <div className="text-xs text-slate-500 font-semibold">Global Broadcast Rights</div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <Sparkles size={24} />
+            </div>
+            <div>
+              <div className="text-xl font-black text-slate-900 font-mono">Multi-Crop</div>
+              <div className="text-xs text-slate-500 font-semibold">16:9 • 9:16 • 1:1 Formats</div>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* CTA BANNER */}
-      <section className="py-20 px-6 relative overflow-hidden bg-neutral-900 border-t border-b border-white/10 text-center">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(230,57,70,0.15)_0%,transparent_70%)] pointer-events-none" />
-        <div className="max-w-4xl mx-auto relative z-10">
-          <h2 className="font-['Bebas_Neue'] text-5xl sm:text-7xl text-white tracking-wide mb-6">
-            READY TO EXPLORE THE FEED?
-          </h2>
-          <p className="text-neutral-300 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            Browse thousands of professionally sourced video clips across sports, news, politics, and entertainment. Download in any format, any quality.
-          </p>
-          <Link
-            to="/feed"
-            className="inline-flex items-center gap-3 bg-[#e63946] hover:bg-[#ff3a4a] text-white text-lg font-bold px-10 py-4 rounded-xl shadow-[0_10px_35px_rgba(230,57,70,0.5)] hover:scale-105 transition-all"
-          >
-            Launch Content Feed <ArrowRight size={20} />
-          </Link>
+        {/* RECENT ASSETS WIRE GRID */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <TrendingUp size={18} className="text-red-600" /> Recent Wire Releases
+              </h2>
+              <p className="text-xs text-slate-500">Fresh footage uploaded directly from news bureaus & events</p>
+            </div>
+            <Link
+              to="/feed"
+              className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1"
+            >
+              View Full Studio Feed <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {topStreams.map((video) => (
+              <div
+                key={video.id}
+                onClick={() => navigate(`/video/${video.id}`)}
+                className="bg-white border border-slate-200 rounded-2xl p-4 hover:border-red-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
+              >
+                <div className="flex flex-col gap-3">
+                  <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent z-10" />
+                    <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 group-hover:scale-110 transition-transform shadow">
+                      <Play size={16} fill="currentColor" className="ml-0.5" />
+                    </div>
+                    <span className="absolute top-2 left-2 z-20 text-[9px] font-bold bg-slate-900/80 backdrop-blur text-white px-2 py-0.5 rounded uppercase">
+                      {video.category}
+                    </span>
+                    <span className="absolute bottom-2 right-2 z-20 text-[10px] font-mono text-white bg-black/70 px-1.5 py-0.5 rounded">
+                      {video.duration}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    {video.title}
+                  </h3>
+                </div>
+
+                <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <span className="font-mono">{video.date}</span>
+                  <span className="font-bold text-slate-700 flex items-center gap-1 group-hover:text-red-600">
+                    <Download size={13} /> {video.formats[0]}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

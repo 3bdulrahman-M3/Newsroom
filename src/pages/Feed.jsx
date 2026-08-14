@@ -1,29 +1,24 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { VIDEOS } from '../data/videos';
-import VideoModal from '../components/VideoModal';
-import { Search, Filter, Play, Download, Calendar, Layers, Star, SlidersHorizontal } from 'lucide-react';
+import { 
+  Search, Play, Download, Grid, List, FolderKanban, Heart
+} from 'lucide-react';
 
-export default function Feed({ searchQuery, setSearchQuery }) {
+export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFavorite }) {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
   const [sortOrder, setSortOrder] = useState('latest');
-  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [viewMode, setViewMode] = useState('grid');
 
   const categories = [
-    { id: 'all', label: 'All Content', icon: '⚡' },
-    { id: 'sports', label: 'Sports', icon: '⚽' },
-    { id: 'politics', label: 'Politics', icon: '🏛️' },
-    { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
-    { id: 'breaking', label: 'Breaking News', icon: '🔴' },
-    { id: 'business', label: 'Business', icon: '💼' }
-  ];
-
-  const formatPills = [
-    { id: 'all', label: 'All Formats' },
-    { id: '4k', label: '4K Ultra HD' },
-    { id: '1080p', label: '1080p HD' },
-    { id: '720p', label: '720p SD' },
-    { id: 'exclusive', label: '⭐ Exclusives Only' }
+    { id: 'all', label: 'All Feeds', count: VIDEOS.length },
+    { id: 'sports', label: 'Sports Wire', count: VIDEOS.filter(v => v.category === 'sports').length },
+    { id: 'politics', label: 'Politics & Gov', count: VIDEOS.filter(v => v.category === 'politics').length },
+    { id: 'entertainment', label: 'Hollywood / Arts', count: VIDEOS.filter(v => v.category === 'entertainment').length },
+    { id: 'breaking', label: 'Breaking News', count: VIDEOS.filter(v => v.category === 'breaking').length },
+    { id: 'business', label: 'Finance & Tech', count: VIDEOS.filter(v => v.category === 'business').length }
   ];
 
   const filteredVideos = useMemo(() => {
@@ -59,209 +54,258 @@ export default function Feed({ searchQuery, setSearchQuery }) {
     return result;
   }, [selectedCategory, selectedFormat, searchQuery, sortOrder]);
 
-  const thumbGradients = {
-    sports: 'from-red-950 via-neutral-900 to-black',
-    politics: 'from-blue-950 via-neutral-900 to-black',
-    entertainment: 'from-purple-950 via-neutral-900 to-black',
-    breaking: 'from-amber-950 via-neutral-900 to-black',
-    business: 'from-emerald-950 via-neutral-900 to-black'
-  };
-
   return (
-    <div className="min-h-screen bg-[#080808] text-neutral-100 font-sans pt-20 flex flex-col md:flex-row">
-      {/* SIDEBAR NAVIGATION */}
-      <aside className="w-full md:w-64 bg-[#0d0d0d] border-b md:border-b-0 md:border-r border-white/10 p-6 flex flex-col gap-6 shrink-0">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pt-16 flex">
+      
+      {/* PROFESSIONAL DASHBOARD SIDEBAR */}
+      <aside className="w-64 bg-white border-r border-slate-200 p-5 hidden md:flex flex-col gap-6 shrink-0 shadow-2xs">
         <div>
-          <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 mb-4 flex items-center gap-2">
-            <Filter size={14} className="text-[#e63946]" /> Categories
-          </h3>
-          <div className="flex md:flex-col gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-2">
+            <FolderKanban size={14} className="text-red-600" /> Wire Categories
+          </div>
+          <div className="flex flex-col gap-1">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all whitespace-nowrap ${
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-[#e63946] text-white shadow-[0_4px_15px_rgba(230,57,70,0.3)]'
-                    : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
-                <span className="flex items-center gap-2.5">
-                  <span>{cat.icon}</span> {cat.label}
+                <span>{cat.label}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
+                  selectedCategory === cat.id ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  {cat.count}
                 </span>
-                {selectedCategory === cat.id && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Quick Info Box */}
-        <div className="hidden md:block mt-auto bg-neutral-900/60 border border-white/5 rounded-xl p-4 text-xs text-neutral-400">
-          <div className="font-bold text-white mb-1">Need custom feeds?</div>
-          <p className="text-[11px] leading-relaxed">
-            Contact Hassan for dedicated live stream feeds or custom API ingest solutions.
-          </p>
+        {/* Quality Filter Group */}
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">
+            Asset Resolution
+          </div>
+          <div className="flex flex-col gap-1">
+            {[
+              { id: 'all', label: 'All Resolutions' },
+              { id: '4k', label: '4K Master Files' },
+              { id: '1080p', label: '1080p Full HD' },
+              { id: 'exclusive', label: '⭐ Exclusives Only' }
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setSelectedFormat(f.id)}
+                className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  selectedFormat === f.id
+                    ? 'text-red-600 font-bold bg-red-50 border border-red-200'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
       </aside>
 
-      {/* MAIN FEED CONTENT */}
-      <main className="flex-1 p-6 md:p-10 flex flex-col gap-6 max-w-7xl">
-        {/* Top Filter Bar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#111] border border-white/10 rounded-2xl p-4">
-          {/* Format Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
-            {formatPills.map((pill) => (
-              <button
-                key={pill.id}
-                onClick={() => setSelectedFormat(pill.id)}
-                className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  selectedFormat === pill.id
-                    ? 'bg-white text-black font-bold'
-                    : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {pill.label}
-              </button>
-            ))}
+      {/* MAIN DASHBOARD STUDIO WORKSPACE */}
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto flex flex-col gap-6">
+        
+        {/* TOP WORKSPACE TOOLBAR */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
+          
+          {/* Search Field */}
+          <div className="w-full sm:w-80 flex items-center bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2">
+            <Search size={15} className="text-slate-400 mr-2 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search wire clips by keyword..."
+              value={searchQuery || ''}
+              onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
+              className="bg-transparent border-none outline-none text-xs font-medium text-slate-800 w-full"
+            />
           </div>
 
-          {/* Sort & Count */}
-          <div className="flex items-center justify-between sm:justify-end gap-4 border-t lg:border-t-0 border-white/5 pt-3 lg:pt-0">
-            <span className="text-xs text-neutral-400 font-mono">
-              <strong className="text-white">{filteredVideos.length}</strong> clips found
+          {/* View Toggle & Sorting */}
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <span className="text-xs font-mono text-slate-500">
+              Showing <strong className="text-slate-900">{filteredVideos.length}</strong> assets
             </span>
 
-            <div className="flex items-center gap-2">
-              <SlidersHorizontal size={14} className="text-neutral-400" />
+            <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="bg-neutral-900 border border-white/10 text-neutral-200 text-xs font-medium rounded-lg px-3 py-1.5 outline-none cursor-pointer"
+                className="bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl px-3 py-2 outline-none cursor-pointer"
               >
-                <option value="latest">Sort by: Newest</option>
-                <option value="oldest">Sort by: Oldest</option>
-                <option value="az">Sort by: Title A-Z</option>
+                <option value="latest">Sort: Newest First</option>
+                <option value="oldest">Sort: Oldest First</option>
+                <option value="az">Sort: Title A-Z</option>
               </select>
+
+              <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 rounded-lg transition-all ${
+                    viewMode === 'grid' ? 'bg-white shadow-xs text-slate-900' : 'text-slate-400'
+                  }`}
+                >
+                  <Grid size={15} />
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-1.5 rounded-lg transition-all ${
+                    viewMode === 'table' ? 'bg-white shadow-xs text-slate-900' : 'text-slate-400'
+                  }`}
+                >
+                  <List size={15} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Video Grid */}
+        {/* ASSET DISPLAY (GRID OR TABLE) */}
         {filteredVideos.length === 0 ? (
-          <div className="bg-[#111] border border-white/10 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-neutral-500">
-              <Search size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-white">No video clips match your criteria</h3>
-            <p className="text-neutral-400 text-sm max-w-md">
-              Try adjusting your search query or reset category filters to view all available distribution feeds.
-            </p>
-            <button
-              onClick={() => {
-                setSelectedCategory('all');
-                setSelectedFormat('all');
-                if (setSearchQuery) setSearchQuery('');
-              }}
-              className="bg-[#e63946] text-white text-xs font-bold px-6 py-2.5 rounded-lg hover:bg-[#ff3a4a] transition-all mt-2"
-            >
-              Reset All Filters
-            </button>
+          <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center flex flex-col items-center justify-center gap-3">
+            <Search size={32} className="text-slate-300" />
+            <h3 className="text-base font-bold text-slate-900">No broadcast assets match your query</h3>
+            <p className="text-xs text-slate-500">Try clearing filters or search terms</p>
           </div>
-        ) : (
+        ) : viewMode === 'grid' ? (
+          /* GRID VIEW */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredVideos.map((video) => (
-              <div
-                key={video.id}
-                onClick={() => setSelectedVideo(video)}
-                className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden hover:border-[#e63946]/60 hover:shadow-[0_10px_30px_rgba(230,57,70,0.15)] transition-all duration-300 flex flex-col cursor-pointer group"
-              >
-                {/* Thumbnail Container */}
-                <div className="relative aspect-video bg-neutral-900 overflow-hidden flex items-center justify-center">
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${
-                      thumbGradients[video.category] || 'from-neutral-800 to-black'
-                    } group-hover:scale-105 transition-transform duration-500`}
-                  />
-
-                  {/* Play Button */}
-                  <div className="w-12 h-12 rounded-full bg-[#e63946]/90 text-white flex items-center justify-center z-10 shadow-lg group-hover:scale-110 transition-transform">
-                    <Play size={20} fill="currentColor" className="ml-0.5" />
-                  </div>
-
-                  {/* Top Badges */}
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 text-[10px] font-bold">
-                    <span className="bg-black/70 backdrop-blur text-white px-2.5 py-1 rounded-md uppercase tracking-wider border border-white/10">
-                      {video.category}
-                    </span>
-                    {video.exclusive && (
-                      <span className="bg-yellow-400/90 text-black px-2 py-0.5 rounded shadow">
-                        ⭐ EXCLUSIVE
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Bottom Duration Badge */}
-                  <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur text-white text-[11px] font-mono font-semibold px-2 py-0.5 rounded border border-white/10">
-                    {video.duration}
-                  </div>
-                </div>
-
-                {/* Card Content */}
-                <div className="p-5 flex-1 flex flex-col justify-between gap-4">
+            {filteredVideos.map((video) => {
+              const isFav = favorites?.includes(video.id);
+              return (
+                <div
+                  key={video.id}
+                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-red-500/50 hover:shadow-md transition-all flex flex-col justify-between group relative"
+                >
                   <div>
-                    <h3 className="font-bold text-base text-white line-clamp-2 group-hover:text-[#e63946] transition-colors leading-snug">
-                      {video.title}
-                    </h3>
-
-                    <div className="flex items-center gap-3 text-xs text-neutral-400 mt-2 font-mono">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} /> {video.date}
+                    <div className="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer" onClick={() => navigate(`/video/${video.id}`)}>
+                      <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 group-hover:scale-110 transition-transform shadow">
+                        <Play size={16} fill="currentColor" className="ml-0.5" />
+                      </div>
+                      <span className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase">
+                        {video.category}
                       </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Layers size={12} /> {video.timestamps.length} markers
+                      <span className="absolute bottom-3 right-3 bg-black/80 text-white text-[10px] font-mono px-2 py-0.5 rounded">
+                        {video.duration}
                       </span>
-                    </div>
-                  </div>
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1">
-                    {video.tags.slice(0, 3).map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="text-[10px] bg-white/5 text-neutral-300 px-2 py-0.5 rounded border border-white/5"
+                      {/* Favorite Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(video.id);
+                        }}
+                        className={`absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center shadow transition-transform hover:scale-110 ${
+                          isFav ? 'bg-white text-red-600' : 'bg-black/60 text-white hover:bg-white hover:text-red-600'
+                        }`}
+                        title={isFav ? 'Remove from favorites' : 'Add to favorites'}
                       >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Footer Bar */}
-                  <div className="pt-3 border-t border-white/5 flex items-center justify-between">
-                    <div className="flex gap-1">
-                      {video.formats.map((fmt) => (
-                        <span
-                          key={fmt}
-                          className="text-[10px] font-mono bg-[#e63946]/10 text-[#e63946] px-1.5 py-0.5 rounded border border-[#e63946]/20 font-bold"
-                        >
-                          {fmt}
-                        </span>
-                      ))}
+                        <Heart size={15} className={isFav ? 'fill-red-600' : ''} />
+                      </button>
                     </div>
 
-                    <button className="text-xs font-bold text-white hover:text-[#e63946] flex items-center gap-1 transition-colors">
-                      <Download size={14} /> Download
+                    <div className="p-4 flex flex-col gap-2 cursor-pointer" onClick={() => navigate(`/video/${video.id}`)}>
+                      <h3 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-red-600 transition-colors">
+                        {video.title}
+                      </h3>
+                      <div className="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
+                        <span>{video.date}</span>
+                        <span>•</span>
+                        <span>{video.timestamps.length} Shot Markers</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 pt-0 border-t border-slate-100 mt-2 flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-100">
+                      {video.formats[0]}
+                    </span>
+                    <button
+                      onClick={() => navigate(`/video/${video.id}`)}
+                      className="text-xs font-bold text-slate-700 hover:text-red-600 flex items-center gap-1"
+                    >
+                      <Download size={13} /> Export
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+        ) : (
+          /* TABLE WORKSPACE VIEW */
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-100 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+                <tr>
+                  <th className="p-4">Fav</th>
+                  <th className="p-4">Asset Title</th>
+                  <th className="p-4">Category</th>
+                  <th className="p-4">Duration</th>
+                  <th className="p-4">Formats</th>
+                  <th className="p-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredVideos.map((video) => {
+                  const isFav = favorites?.includes(video.id);
+                  return (
+                    <tr
+                      key={video.id}
+                      className="hover:bg-slate-50 transition-colors"
+                    >
+                      <td className="p-4">
+                        <button
+                          onClick={() => toggleFavorite(video.id)}
+                          className="text-slate-400 hover:text-red-600"
+                        >
+                          <Heart size={16} className={isFav ? 'text-red-600 fill-red-600' : ''} />
+                        </button>
+                      </td>
+                      <td 
+                        onClick={() => navigate(`/video/${video.id}`)}
+                        className="p-4 font-bold text-slate-900 flex items-center gap-3 cursor-pointer"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0">
+                          <Play size={12} fill="currentColor" />
+                        </div>
+                        <span className="line-clamp-1">{video.title}</span>
+                      </td>
+                      <td className="p-4">
+                        <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[10px] font-bold uppercase">
+                          {video.category}
+                        </span>
+                      </td>
+                      <td className="p-4 font-mono text-slate-500">{video.duration}</td>
+                      <td className="p-4">
+                        <span className="text-red-600 font-mono font-bold">{video.formats.join(', ')}</span>
+                      </td>
+                      <td className="p-4 text-right">
+                        <button 
+                          onClick={() => navigate(`/video/${video.id}`)}
+                          className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-600 transition-colors"
+                        >
+                          View & Export
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </main>
 
-      {/* Video Modal Popup */}
-      <VideoModal video={selectedVideo} onClose={() => setSelectedVideo(null)} />
     </div>
   );
 }
