@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MEDIA_ITEMS } from '../data/mediaData';
 import { useUser } from '../context/UserContext';
 import { 
-  Search, Play, Download, Grid, List, FolderKanban, Heart, Lock, Calendar, Clock, Layers
+  Search, Play, Download, Grid, List, FolderKanban, Heart, Lock, Calendar, Clock, Layers, ChevronDown
 } from 'lucide-react';
 
 export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFavorite }) {
@@ -15,6 +15,7 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
   const [selectedSubcat, setSelectedSubcat] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
   const [sortOrder, setSortOrder] = useState('latest');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
 
   const categories = [
@@ -198,15 +199,58 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
             </span>
 
             <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl px-3 py-2 outline-none cursor-pointer"
-              >
-                <option value="latest">Sort: Newest</option>
-                <option value="oldest">Sort: Oldest</option>
-                <option value="az">Sort: Title A-Z</option>
-              </select>
+              {/* Custom Styled Sort Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowSortDropdown(!showSortDropdown)}
+                  className="flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-3 py-2 outline-none cursor-pointer transition-all shadow-xs"
+                >
+                  <span>
+                    {sortOrder === 'latest' && 'Sort: Newest'}
+                    {sortOrder === 'oldest' && 'Sort: Oldest'}
+                    {sortOrder === 'az' && 'Sort: Title A-Z'}
+                  </span>
+                  <ChevronDown size={14} className="text-slate-400" />
+                </button>
+
+                {showSortDropdown && (
+                  <div className="absolute right-0 mt-2 w-36 bg-white border border-slate-200 rounded-xl shadow-xl p-1 z-50 flex flex-col gap-0.5">
+                    <button
+                      onClick={() => {
+                        setSortOrder('latest');
+                        setShowSortDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                        sortOrder === 'latest' ? 'bg-red-600 text-white' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      Sort: Newest
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSortOrder('oldest');
+                        setShowSortDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                        sortOrder === 'oldest' ? 'bg-red-600 text-white' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      Sort: Oldest
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSortOrder('az');
+                        setShowSortDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                        sortOrder === 'az' ? 'bg-red-600 text-white' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      Sort: Title A-Z
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <div className="flex bg-white p-1 rounded-xl border border-slate-200">
                 <button
