@@ -1,47 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { VIDEOS } from '../data/videos';
+import { MEDIA_ITEMS } from '../data/mediaData';
+import { useUser } from '../context/UserContext';
 import { 
   ArrowLeft, Play, Pause, Download, Check, Calendar, Clock, Monitor, 
-  Layers, Tag, Heart
+  Layers, Tag, Heart, Lock, ShieldCheck, ShoppingBag, Sliders, Image, Sparkles
 } from 'lucide-react';
 
 export default function VideoDetail({ favorites, toggleFavorite }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const video = VIDEOS.find((v) => v.id === parseInt(id, 10));
+  const { isSubscriber, addToCart, language } = useUser();
+  const isAr = language === 'ar';
 
-  const isFav = favorites?.includes(video?.id);
+  const item = MEDIA_ITEMS.find((v) => v.id === parseInt(id, 10));
+  const isFav = favorites?.includes(item?.id);
+  const isCleared = item?.rightsStatus === 'cleared';
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [selectedRes, setSelectedRes] = useState('4K');
   const [selectedAspect, setSelectedAspect] = useState('16:9');
   const [selectedFmt, setSelectedFmt] = useState('MP4');
-  const [watermarkOn, setWatermarkOn] = useState(false);
+  const [watermarkOn, setWatermarkOn] = useState(!isCleared); // Watermark default ON if restricted/unlicensed
   const [downloading, setDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
+  // Subscription Feature States
+  const [customLogo, setCustomLogo] = useState(false);
+  const [logoPos, setLogoPos] = useState('top-right');
+  const [includeCaptions, setIncludeCaptions] = useState(true);
+
   useEffect(() => {
-    if (video) {
-      setSelectedRes(video.formats[0] || '4K');
+    if (item) {
+      setSelectedRes(item.formats[0] || '4K');
       setSelectedAspect('16:9');
       setSelectedFmt('MP4');
-      setWatermarkOn(false);
+      setWatermarkOn(item.rightsStatus !== 'cleared');
       setIsPlaying(false);
       setCurrentTime(0);
       setDownloading(false);
       setDownloadSuccess(false);
     }
-  }, [video]);
+  }, [item]);
 
-  if (!video) {
+  if (!item) {
     return (
-      <div className="min-h-screen bg-slate-50 pt-24 pb-12 flex flex-col items-center justify-center text-center p-6">
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Asset Not Found</h2>
-        <p className="text-xs text-slate-500 mb-6">The requested broadcast video asset does not exist or has been archived.</p>
+      <div className="min-h-screen bg-slate-950 pt-24 pb-12 flex flex-col items-center justify-center text-center p-6 text-slate-100">
+        <h2 className="text-xl font-bold mb-2">Media Asset Not Found</h2>
         <Link to="/feed" className="bg-red-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold">
-          Back to Media Studio Feed
+          Back to Media Library
         </Link>
       </div>
     );
@@ -53,7 +61,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
     return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
   };
 
-  const totalSecs = parseDuration(video.duration);
+  const totalSecs = parseDuration(item.duration);
 
   const formatTime = (secs) => {
     const m = Math.floor(secs / 60);
@@ -91,79 +99,77 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
     }, 1500);
   };
 
-  const relatedVideos = VIDEOS.filter((v) => v.id !== video.id).slice(0, 3);
-
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pt-16 pb-16">
-      <div className="max-w-7xl mx-auto px-6 pt-6 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pt-16 pb-16">
+      <div className="w-full px-6 md:px-12 pt-6 flex flex-col gap-6">
         
         {/* Top Back Breadcrumb Bar */}
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate('/feed')}
-            className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:border-slate-300 px-3.5 py-2 rounded-xl transition-all shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl transition-all cursor-pointer"
           >
-            <ArrowLeft size={14} /> Back to Studio Feed
+            <ArrowLeft size={14} /> {isAr ? 'العودة لمكتبة الوسائط' : 'Back to Media Library'}
           </button>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => toggleFavorite(video.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                isFav
-                  ? 'bg-red-50 text-red-600 border-red-200'
-                  : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <Heart size={14} className={isFav ? 'fill-red-600' : ''} />
-              {isFav ? 'Saved to Favorites' : 'Add to Favorites'}
-            </button>
-          </div>
+          <button
+            onClick={() => toggleFavorite(item.id)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+              isFav
+                ? 'bg-red-950/80 text-red-400 border-red-800'
+                : 'bg-slate-900 text-slate-300 border-slate-800 hover:text-white'
+            }`}
+          >
+            <Heart size={14} className={isFav ? 'fill-red-500 text-red-500' : ''} />
+            {isFav ? 'Saved to Favorites' : 'Add to Favorites'}
+          </button>
         </div>
 
         {/* Main Grid Workspace */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Player & Metadata */}
+          {/* Left Column: Player & Rights Details */}
           <div className="lg:col-span-8 flex flex-col gap-6">
             
-            {/* Header Title Block */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col gap-3">
+            {/* Header Title & Rights Badge */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md flex flex-col gap-3">
               <div className="flex items-center gap-2">
-                <span className="bg-red-50 text-red-600 border border-red-200 font-bold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md">
-                  {video.category}
+                <span className="bg-red-950 text-red-400 border border-red-800 font-bold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md">
+                  {item.category}
                 </span>
-                {video.exclusive && (
-                  <span className="bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md">
-                    ⭐ Exclusive Master
-                  </span>
-                )}
+                <span className={`font-bold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+                  isCleared
+                    ? 'bg-emerald-950 text-emerald-400 border-emerald-800'
+                    : 'bg-amber-950 text-amber-400 border-amber-800'
+                }`}>
+                  Rights Status: {item.rightsStatus.toUpperCase()}
+                </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
-                {video.title}
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+                {item.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 font-mono border-t border-slate-100 pt-3 mt-1">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Calendar size={13} className="text-red-600" /> Released: {video.date}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Clock size={13} className="text-red-600" /> Duration: {video.duration}
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1.5 font-medium">
-                  <Monitor size={13} className="text-red-600" /> Available: {video.formats.join(', ')}
-                </span>
+              {/* Restrictions notice */}
+              <div className="bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs text-slate-400 font-mono">
+                <strong className="text-slate-200 block mb-0.5">Rights & Restrictions Metadata:</strong>
+                {item.restrictions}
               </div>
             </div>
 
-            {/* Full Cinema Player Screen */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-300 aspect-video flex flex-col justify-between p-4 shadow-lg group">
+            {/* Cinema Video Player / Preview Screen */}
+            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 aspect-video flex flex-col justify-between p-4 shadow-xl group">
+              {/* Watermark Overlay Indicator */}
               {watermarkOn && (
-                <div className="absolute top-4 right-4 bg-black/80 backdrop-blur border border-white/20 px-3 py-1 rounded text-xs font-black tracking-widest text-red-500">
-                  REDWIRE WATERMARK
+                <div className="absolute top-4 right-4 bg-black/80 backdrop-blur border border-white/20 px-3 py-1 rounded text-xs font-black tracking-widest text-red-500 z-30">
+                  REDWIRE WATERMARKED PREVIEW
+                </div>
+              )}
+
+              {/* Custom Logo Overlay (Subscription Feature) */}
+              {customLogo && isSubscriber && (
+                <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-red-600 text-white font-black text-xs px-3 py-1.5 rounded-lg shadow-lg z-30`}>
+                  NETWORK BRAND LOGO
                 </div>
               )}
 
@@ -176,7 +182,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 </button>
               </div>
 
-              {/* Player Timeline Controls */}
+              {/* Player Controls */}
               <div className="bg-black/80 backdrop-blur-md rounded-xl p-3 flex flex-col gap-2 border border-white/10">
                 <div
                   className="h-2 bg-white/20 hover:h-3 rounded-full cursor-pointer transition-all relative overflow-hidden"
@@ -184,7 +190,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 >
                   <div
                     className="h-full bg-red-600 rounded-full"
-                    style={{ width: `${(currentTime / totalSecs) * 100}%` }}
+                    style={{ width: `${(currentTime / (totalSecs || 1)) * 100}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between text-xs text-slate-300 font-mono">
@@ -192,85 +198,82 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                     <button onClick={() => setIsPlaying(!isPlaying)} className="hover:text-white">
                       {isPlaying ? <Pause size={14} /> : <Play size={14} />}
                     </button>
-                    <span>
-                      {formatTime(currentTime)} / {video.duration}
-                    </span>
+                    <span>{formatTime(currentTime)} / {item.duration || '0:00'}</span>
                   </div>
-                  <span>{selectedRes} • {selectedAspect} • {selectedFmt}</span>
+                  <span>{selectedRes} • {selectedAspect}</span>
                 </div>
               </div>
             </div>
 
-            {/* Asset Description & Timestamps */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col gap-6">
+            {/* Script & Transcripts Section */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md flex flex-col gap-6">
               <div>
-                <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-2">Description & Context</h3>
-                <p className="text-slate-700 text-sm leading-relaxed">{video.desc}</p>
+                <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-2">Broadcast Script & Story</h3>
+                <p className="text-slate-300 text-sm leading-relaxed bg-slate-950 p-4 rounded-xl border border-slate-850 font-sans">
+                  {item.script}
+                </p>
               </div>
 
-              <div>
-                <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                  <Layers size={14} className="text-red-600" /> Shot Markers & Key Timestamps
-                </h3>
-                <div className="flex flex-col gap-2">
-                  {video.timestamps.map((ts, i) => (
-                    <div
-                      key={i}
-                      onClick={() => handleSeek(ts.t)}
-                      className="flex items-center gap-4 p-3 rounded-xl bg-slate-50 hover:bg-red-50/50 border border-slate-200 hover:border-red-200 cursor-pointer transition-all"
-                    >
-                      <span className="text-xs font-mono font-bold text-red-600 bg-red-100/80 px-2.5 py-1 rounded-md">
-                        {ts.t}
-                      </span>
-                      <span className="text-xs font-semibold text-slate-800">{ts.d}</span>
-                    </div>
-                  ))}
+              {item.transcript && (
+                <div>
+                  <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-2">Audio Transcript & Speakers</h3>
+                  <pre className="text-xs text-slate-400 whitespace-pre-wrap font-mono bg-slate-950 p-4 rounded-xl border border-slate-850">
+                    {item.transcript}
+                  </pre>
                 </div>
-              </div>
+              )}
 
-              {/* Tags */}
-              <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-400 mr-2 flex items-center gap-1">
-                  <Tag size={12} /> Tags:
-                </span>
-                {video.tags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-200 font-medium"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
+              {/* Timestamps */}
+              {item.timestamps && item.timestamps.length > 0 && (
+                <div>
+                  <h3 className="text-xs uppercase font-bold tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                    <Layers size={14} className="text-red-500" /> Shot Markers & Timestamps
+                  </h3>
+                  <div className="flex flex-col gap-2">
+                    {item.timestamps.map((ts, i) => (
+                      <div
+                        key={i}
+                        onClick={() => handleSeek(ts.t)}
+                        className="flex items-center gap-4 p-3 rounded-xl bg-slate-950 hover:bg-slate-850 border border-slate-800 cursor-pointer transition-all"
+                      >
+                        <span className="text-xs font-mono font-bold text-red-400 bg-red-950/80 border border-red-800 px-2.5 py-1 rounded-md">
+                          {ts.t}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-200">{ts.d}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Right Column: Export Studio Configurator */}
+          {/* Right Column: Export / Download Workspace & Subscription Features */}
           <div className="lg:col-span-4 flex flex-col gap-6 sticky top-20">
             
-            {/* Download Studio Box */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-md flex flex-col gap-5">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                  <Download size={16} className="text-red-600" /> Export Console
+            {/* Download Workspace Box */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md flex flex-col gap-5">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                  <Download size={16} className="text-red-500" /> Download & Export
                 </h3>
-                <span className="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold">
-                  STUDIO v2
+                <span className="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-bold">
+                  {isSubscriber ? 'Subscriber Unlocked' : 'Ad-hoc Licensing'}
                 </span>
               </div>
 
               {/* Resolution Picker */}
               <div>
-                <label className="text-xs text-slate-500 font-bold block mb-2">Master Resolution</label>
+                <label className="text-xs text-slate-400 font-bold block mb-2">Resolution Quality</label>
                 <div className="grid grid-cols-3 gap-1.5">
-                  {video.formats.map((res) => (
+                  {item.formats.map((res) => (
                     <button
                       key={res}
                       onClick={() => setSelectedRes(res)}
-                      className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                      className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         selectedRes === res
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
+                          ? 'bg-red-600 text-white shadow-xs'
+                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
                       }`}
                     >
                       {res}
@@ -279,18 +282,18 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 </div>
               </div>
 
-              {/* Aspect Ratio Picker */}
+              {/* Aspect Ratio Crop (Subscriber Unlimited vs Standard) */}
               <div>
-                <label className="text-xs text-slate-500 font-bold block mb-2">Aspect Crop Ratio</label>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {['16:9', '9:16', '1:1', '4:3'].map((aspect) => (
+                <label className="text-xs text-slate-400 font-bold block mb-2">Aspect Crop Ratio</label>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {['16:9', '9:16', '1:1'].map((aspect) => (
                     <button
                       key={aspect}
                       onClick={() => setSelectedAspect(aspect)}
-                      className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                      className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         selectedAspect === aspect
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
+                          ? 'bg-red-600 text-white shadow-xs'
+                          : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
                       }`}
                     >
                       {aspect}
@@ -299,92 +302,101 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 </div>
               </div>
 
-              {/* Format Container */}
-              <div>
-                <label className="text-xs text-slate-500 font-bold block mb-2">Container Format</label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {['MP4', 'MOV', 'MXF'].map((fmt) => (
+              {/* SUBSCRIPTION-ONLY FEATURES BLOCK */}
+              <div className="border-t border-b border-slate-800 py-4 flex flex-col gap-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Sparkles size={14} className="text-amber-400" /> Custom Network Logo Overlay
+                  </span>
+                  {!isSubscriber && (
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800">
+                      Subscriber Feature
+                    </span>
+                  )}
+                </div>
+
+                {isSubscriber ? (
+                  <div className="flex flex-col gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <label className="flex items-center justify-between text-xs text-slate-300 cursor-pointer">
+                      <span>Enable Custom Logo</span>
+                      <input
+                        type="checkbox"
+                        checked={customLogo}
+                        onChange={(e) => setCustomLogo(e.target.checked)}
+                        className="w-4 h-4 accent-red-600"
+                      />
+                    </label>
+
+                    {customLogo && (
+                      <div className="flex gap-2 pt-2 border-t border-slate-800">
+                        <button
+                          onClick={() => setLogoPos('top-right')}
+                          className={`text-[10px] font-bold px-2 py-1 rounded ${logoPos === 'top-right' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                        >
+                          Top Right
+                        </button>
+                        <button
+                          onClick={() => setLogoPos('top-left')}
+                          className={`text-[10px] font-bold px-2 py-1 rounded ${logoPos === 'top-left' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                        >
+                          Top Left
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-850 text-[11px] text-slate-500 flex items-center gap-2">
+                    <Lock size={14} className="text-amber-500 shrink-0" />
+                    <span>Logo overlay & custom aspect ratio branding is available for active subscribers.</span>
+                  </div>
+                )}
+              </div>
+
+              {/* ACTION TRIGGER: Subscriber Download vs Ad-hoc Purchase */}
+              <div className="flex flex-col gap-2 pt-1">
+                {isSubscriber ? (
+                  isCleared ? (
                     <button
-                      key={fmt}
-                      onClick={() => setSelectedFmt(fmt)}
-                      className={`py-2 rounded-xl text-xs font-bold transition-all ${
-                        selectedFmt === fmt
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
+                      onClick={handleDownload}
+                      disabled={downloading}
+                      className={`w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
+                        downloadSuccess
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-red-600 hover:bg-red-500 text-white shadow-red-600/20'
                       }`}
                     >
-                      {fmt}
+                      {downloading ? (
+                        <span>⏳ Exporting Master File...</span>
+                      ) : downloadSuccess ? (
+                        <>
+                          <Check size={16} /> Asset Downloaded Successfully!
+                        </>
+                      ) : (
+                        <>
+                          <Download size={16} /> Export Master Package ({selectedRes} • {selectedAspect})
+                        </>
+                      )}
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Watermark Switch */}
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-900 block">Apply Watermark</span>
-                  <span className="text-[10px] text-slate-500">Embed REDWIRE logo</span>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={watermarkOn}
-                  onChange={(e) => setWatermarkOn(e.target.checked)}
-                  className="w-4 h-4 accent-red-600 cursor-pointer"
-                />
-              </div>
-
-              {/* Trigger Button */}
-              <div className="flex flex-col gap-2 pt-2">
-                <button
-                  onClick={handleDownload}
-                  disabled={downloading}
-                  className={`w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
-                    downloadSuccess
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-red-600 hover:bg-red-500 text-white shadow-red-600/20'
-                  }`}
-                >
-                  {downloading ? (
-                    <span>⏳ Preparing Master Package...</span>
-                  ) : downloadSuccess ? (
-                    <>
-                      <Check size={16} /> Asset Package Downloaded!
-                    </>
                   ) : (
-                    <>
-                      <Download size={16} /> Download Asset ({selectedRes} • {selectedAspect})
-                    </>
-                  )}
-                </button>
+                    <button
+                      disabled
+                      className="w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 bg-slate-950 text-slate-500 border border-slate-800 cursor-not-allowed opacity-60"
+                    >
+                      <Lock size={16} /> Download Disabled (Rights Restricted)
+                    </button>
+                  )
+                ) : (
+                  <button
+                    onClick={() => addToCart(item)}
+                    className="w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md cursor-pointer"
+                  >
+                    <ShoppingBag size={16} /> Buy Commercial License • ${item.price}
+                  </button>
+                )}
+
                 <div className="text-center text-[11px] text-slate-500 font-mono">
                   Estimated Export Size: ~{getEstimatedSize()}
                 </div>
-              </div>
-            </div>
-
-            {/* Related Broadcast Wire Assets */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex flex-col gap-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Related Studio Assets
-              </h4>
-              <div className="flex flex-col gap-3">
-                {relatedVideos.map((rel) => (
-                  <Link
-                    key={rel.id}
-                    to={`/video/${rel.id}`}
-                    className="flex gap-3 items-center hover:bg-slate-50 p-2 rounded-xl transition-colors group"
-                  >
-                    <div className="w-16 h-10 rounded-lg bg-slate-900 flex items-center justify-center text-white shrink-0 relative overflow-hidden">
-                      <Play size={12} fill="currentColor" />
-                    </div>
-                    <div>
-                      <h5 className="text-xs font-bold text-slate-900 group-hover:text-red-600 transition-colors line-clamp-1">
-                        {rel.title}
-                      </h5>
-                      <span className="text-[10px] text-slate-400 font-mono">{rel.duration} • {rel.category}</span>
-                    </div>
-                  </Link>
-                ))}
               </div>
             </div>
 

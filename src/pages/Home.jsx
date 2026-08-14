@@ -1,38 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { VIDEOS } from '../data/videos';
+import { useUser } from '../context/UserContext';
+import { MEDIA_ITEMS, SCRIPTS, UPCOMING_EVENTS } from '../data/mediaData';
 import { 
-  Play, Download, ShieldCheck, Cpu, ArrowUpRight, 
-  Tv2, TrendingUp, Sparkles, ArrowRight
+  Play, Download, ArrowRight, Sparkles, FileText, CalendarDays, 
+  TrendingUp, Radio, ShieldCheck, Heart, ShoppingBag, Eye, Layers, Lock, Flame
 } from 'lucide-react';
 
-export default function Home() {
+export default function Home({ favorites, toggleFavorite }) {
   const navigate = useNavigate();
-  const featuredVideo = VIDEOS[0];
-  const topStreams = VIDEOS.slice(1, 7);
+  const { isSubscriber, language, addToCart } = useUser();
+  const isAr = language === 'ar';
+
+  const featuredItem = MEDIA_ITEMS[0];
+  const latestMedia = MEDIA_ITEMS.slice(1, 5);
+  const latestScripts = SCRIPTS.slice(0, 2);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-6 pt-6 flex flex-col gap-8">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pt-16 pb-16">
+      <div className="w-full px-6 md:px-12 pt-6 flex flex-col gap-8">
         
-        {/* TOP HERO DASHBOARD BANNER */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 rounded-3xl p-8 md:p-10 text-white relative overflow-hidden shadow-xl">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/15 rounded-full filter blur-3xl pointer-events-none" />
-          
+        {/* TOP HERO USER WELCOME BANNER */}
+        <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 rounded-3xl p-8 md:p-10 border border-slate-800 relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full filter blur-3xl pointer-events-none" />
+
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 flex flex-col gap-5">
+            <div className="lg:col-span-7 flex flex-col gap-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold w-fit">
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                ENTERPRISE MEDIA HUB
+                {isSubscriber ? (isAr ? 'حساب مشترك نشط' : 'Active Subscriber Portal') : (isAr ? 'بوابة الشراء المباشر' : 'Ad-hoc Marketplace')}
               </div>
 
               <h1 className="font-['Bebas_Neue'] text-5xl sm:text-7xl tracking-wider leading-none">
-                BROADCAST-READY <br />
-                <span className="text-red-500">NEWS & SPORTS</span> DISTRIBUTION
+                {isAr ? 'بوابة التوزيع والتغطيات الإعلامية' : 'BROADCAST WIRE & MEDIA HUB'}
               </h1>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-xl">
-                High-speed media wire for newsrooms and agencies. Download cleared 4K & 1080p footage with instant timestamps and multi-ratio exports.
+                {isAr
+                  ? 'منصة الوصول الفوري للتغطيات الرياضية والأخبار العاجلة والسكريبتات الجاهزة للإنتاج والتصدير.'
+                  : 'Instant access to broadcast-ready sports highlights, breaking news footage, scripts, and coverage schedules.'}
               </p>
 
               <div className="flex flex-wrap gap-4 pt-2">
@@ -40,152 +46,218 @@ export default function Home() {
                   to="/feed"
                   className="bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl flex items-center gap-2 shadow-lg shadow-red-600/30 transition-all hover:scale-105"
                 >
-                  <Tv2 size={16} /> Access Live Media Feed <ArrowRight size={16} />
+                  <Sparkles size={16} /> {isAr ? 'تصفح مكتبة الوسائط' : 'Browse Media Library'} <ArrowRight size={16} />
+                </Link>
+                <Link
+                  to="/planner"
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl border border-slate-700 transition-all"
+                >
+                  <CalendarDays size={16} className="inline mr-2" /> {isAr ? 'جدول التغطيات' : 'Sports Planner'}
                 </Link>
               </div>
             </div>
 
-            {/* Featured Live Preview Widget */}
-            <div className="lg:col-span-5 bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 flex flex-col gap-4">
-              <div className="flex items-center justify-between text-xs text-slate-300 font-bold uppercase tracking-wider">
+            {/* Featured Item Preview */}
+            <div className="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-4">
+              <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
                 <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" /> Featured Wire Asset
+                  <Flame size={14} className="text-red-500" /> {isAr ? 'أبرز التغطيات الحالية' : 'Featured Asset'}
                 </span>
-                <span className="text-red-400">4K HDR</span>
+                <span className="text-red-400 font-mono">4K HDR</span>
               </div>
 
               <div 
-                onClick={() => navigate(`/video/${featuredVideo.id}`)}
-                className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 border border-white/10 group cursor-pointer"
+                onClick={() => navigate(`/video/${featuredItem.id}`)}
+                className="relative aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-800 group cursor-pointer"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent z-10" />
                 <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 group-hover:scale-110 transition-transform shadow-lg">
                   <Play size={20} fill="currentColor" className="ml-0.5" />
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 z-20">
-                  <span className="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
-                    {featuredVideo.category}
+                  <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
+                    {featuredItem.category}
                   </span>
                   <h4 className="text-xs font-bold text-white mt-1 line-clamp-1">
-                    {featuredVideo.title}
+                    {featuredItem.title}
                   </h4>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-mono text-slate-300">
-                <div className="bg-white/5 p-2 rounded-lg">
-                  <span className="block text-slate-400 text-[9px] uppercase">Duration</span>
-                  {featuredVideo.duration}
+                <div className="bg-slate-800/60 p-2 rounded-lg">
+                  <span className="block text-slate-500 text-[9px] uppercase">{isAr ? 'المدة' : 'Duration'}</span>
+                  {featuredItem.duration}
                 </div>
-                <div className="bg-white/5 p-2 rounded-lg">
-                  <span className="block text-slate-400 text-[9px] uppercase">Markers</span>
-                  {featuredVideo.timestamps.length} Shots
+                <div className="bg-slate-800/60 p-2 rounded-lg">
+                  <span className="block text-slate-500 text-[9px] uppercase">{isAr ? 'المصدر' : 'Source'}</span>
+                  REDWIRE
                 </div>
-                <div className="bg-white/5 p-2 rounded-lg">
-                  <span className="block text-slate-400 text-[9px] uppercase">Format</span>
-                  {featuredVideo.formats[0]}
+                <div className="bg-slate-800/60 p-2 rounded-lg">
+                  <span className="block text-slate-500 text-[9px] uppercase">{isAr ? 'الحالة' : 'Rights'}</span>
+                  <span className="text-emerald-400 font-bold">Cleared</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* METRICS & CAPABILITIES BAR */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
-              <Tv2 size={24} />
+        {/* LATEST SCRIPTS & UPCOMING EVENTS SECTION */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Latest Scripts Widget */}
+          <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <FileText size={18} className="text-red-500" /> {isAr ? 'أحدث الأخبار والسكريبتات' : 'Latest Scripts & News Wire'}
+              </h2>
+              <Link to="/scripts" className="text-xs font-bold text-red-500 hover:underline">
+                {isAr ? 'عرض الكل' : 'View All Scripts'}
+              </Link>
             </div>
-            <div>
-              <div className="text-xl font-black text-slate-900 font-mono">10,000+</div>
-              <div className="text-xs text-slate-500 font-semibold">Active Distribution Assets</div>
+
+            <div className="flex flex-col gap-3">
+              {latestScripts.map((script) => (
+                <div key={script.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span className="text-red-400 font-bold uppercase">{script.category}</span>
+                    <span>{script.date}</span>
+                  </div>
+                  <h3 className="font-bold text-sm text-white">
+                    {isAr ? script.titleAr : script.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                    {isAr ? script.contentAr : script.contentEn}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <Cpu size={24} />
+          {/* Upcoming Sports Events Planner Widget */}
+          <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <CalendarDays size={18} className="text-red-500" /> {isAr ? 'الأحداث الرياضية القادمة' : 'Upcoming Sports Coverage'}
+              </h2>
+              <Link to="/planner" className="text-xs font-bold text-red-500 hover:underline">
+                {isAr ? 'الجدول الكامل' : 'Full Planner'}
+              </Link>
             </div>
-            <div>
-              <div className="text-xl font-black text-slate-900 font-mono">&lt; 3 Secs</div>
-              <div className="text-xs text-slate-500 font-semibold">Instant Stream Ingest</div>
-            </div>
-          </div>
 
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <ShieldCheck size={24} />
-            </div>
-            <div>
-              <div className="text-xl font-black text-slate-900 font-mono">100% Cleared</div>
-              <div className="text-xs text-slate-500 font-semibold">Global Broadcast Rights</div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-2xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <Sparkles size={24} />
-            </div>
-            <div>
-              <div className="text-xl font-black text-slate-900 font-mono">Multi-Crop</div>
-              <div className="text-xs text-slate-500 font-semibold">16:9 • 9:16 • 1:1 Formats</div>
+            <div className="flex flex-col gap-3">
+              {UPCOMING_EVENTS.map((event) => (
+                <div key={event.id} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold bg-slate-800 text-slate-300 px-2 py-0.5 rounded uppercase">
+                      {event.date} • {event.time}
+                    </span>
+                    <h4 className="font-bold text-xs text-white mt-1.5">
+                      {isAr ? event.eventAr : event.event}
+                    </h4>
+                    <span className="text-[10px] text-slate-400">{event.location}</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-1 rounded">
+                    {event.coverageStatus}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* RECENT ASSETS WIRE GRID */}
+        {/* RECENT MEDIA ASSETS GRID */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <TrendingUp size={18} className="text-red-600" /> Recent Wire Releases
-              </h2>
-              <p className="text-xs text-slate-500">Fresh footage uploaded directly from news bureaus & events</p>
-            </div>
-            <Link
-              to="/feed"
-              className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1"
-            >
-              View Full Studio Feed <ArrowUpRight size={14} />
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <TrendingUp size={18} className="text-red-500" /> {isAr ? 'أحدث الوسائط المتاحة' : 'Recent Released Assets'}
+            </h2>
+            <Link to="/feed" className="text-xs font-bold text-red-500 hover:underline">
+              {isAr ? 'تصفح كل الوسائط' : 'View Full Media Library'}
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {topStreams.map((video) => (
-              <div
-                key={video.id}
-                onClick={() => navigate(`/video/${video.id}`)}
-                className="bg-white border border-slate-200 rounded-2xl p-4 hover:border-red-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
-              >
-                <div className="flex flex-col gap-3">
-                  <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900">
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent z-10" />
-                    <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 group-hover:scale-110 transition-transform shadow">
-                      <Play size={16} fill="currentColor" className="ml-0.5" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {latestMedia.map((item) => {
+              const isFav = favorites?.includes(item.id);
+              const isCleared = item.rightsStatus === 'cleared';
+              return (
+                <div
+                  key={item.id}
+                  className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between group"
+                >
+                  <div onClick={() => navigate(`/video/${item.id}`)} className="cursor-pointer">
+                    <div className="relative aspect-video bg-slate-950 overflow-hidden">
+                      <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 group-hover:scale-110 transition-transform shadow">
+                        <Play size={16} fill="currentColor" className="ml-0.5" />
+                      </div>
+                      <span className="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase">
+                        {item.category}
+                      </span>
+                      {item.duration && (
+                        <span className="absolute bottom-2.5 right-2.5 bg-black/80 text-white text-[10px] font-mono px-2 py-0.5 rounded">
+                          {item.duration}
+                        </span>
+                      )}
+
+                      {/* Favorite button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(item.id);
+                        }}
+                        className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-black/60 hover:bg-slate-900 text-white flex items-center justify-center"
+                      >
+                        <Heart size={14} className={isFav ? 'text-red-500 fill-red-500' : ''} />
+                      </button>
                     </div>
-                    <span className="absolute top-2 left-2 z-20 text-[9px] font-bold bg-slate-900/80 backdrop-blur text-white px-2 py-0.5 rounded uppercase">
-                      {video.category}
-                    </span>
-                    <span className="absolute bottom-2 right-2 z-20 text-[10px] font-mono text-white bg-black/70 px-1.5 py-0.5 rounded">
-                      {video.duration}
-                    </span>
+
+                    <div className="p-4 flex flex-col gap-2">
+                      <h3 className="font-bold text-xs text-white line-clamp-2 group-hover:text-red-400 transition-colors">
+                        {item.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
+                        <span>{item.date}</span>
+                        <span>•</span>
+                        <span className={isCleared ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
+                          {item.rightsStatus.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <h3 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-red-600 transition-colors">
-                    {video.title}
-                  </h3>
+                  <div className="p-4 pt-0 border-t border-slate-800/80 mt-2 flex items-center justify-between">
+                    {isSubscriber ? (
+                      isCleared ? (
+                        <button
+                          onClick={() => navigate(`/video/${item.id}`)}
+                          className="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1"
+                        >
+                          <Download size={13} /> {isAr ? 'تصدير وتحميل' : 'Export & Download'}
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="w-full bg-slate-900 text-slate-500 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1 border border-slate-800 opacity-60 cursor-not-allowed"
+                        >
+                          <Lock size={13} /> {isAr ? 'حقوق مقيدة' : 'Restricted Rights'}
+                        </button>
+                      )
+                    ) : (
+                      <button
+                        onClick={() => addToCart(item)}
+                        className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1"
+                      >
+                        <ShoppingBag size={13} /> ${item.price} • Add to Cart
+                      </button>
+                    )}
+                  </div>
                 </div>
-
-                <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                  <span className="font-mono">{video.date}</span>
-                  <span className="font-bold text-slate-700 flex items-center gap-1 group-hover:text-red-600">
-                    <Download size={13} /> {video.formats[0]}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
+
       </div>
     </div>
   );
