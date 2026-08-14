@@ -181,15 +181,15 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
 
             {/* Cinema Video Player / Preview Screen */}
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 aspect-video flex flex-col justify-between p-4 shadow-2xl group">
-              {/* Always Visible REDWIRE Watermark Overlay */}
-              <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white/80 backdrop-blur-md text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-white/40 shadow-xl z-30 flex items-center select-none`}>
-                <img src="/logo.png" alt="REDWIRE Logo" className="h-8 w-auto object-contain" />
-                <span className="font-['Montserrat'] font-extrabold tracking-tight text-sm leading-none">
-                  RED<span className="text-red-600">WIRE</span>
+              {/* Center Screen Subtly Transparent REDWIRE Watermark Overlay */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-black z-10 flex items-center select-none pointer-events-none opacity-25 scale-[1.7] sm:scale-[2.1] transition-all">
+                <img src="/logo.png" alt="REDWIRE Logo" className="h-12 md:h-14 w-auto object-contain filter drop-shadow-2xl opacity-75" />
+                <span className="font-['Montserrat'] font-extrabold tracking-wider text-2xl md:text-4xl leading-none drop-shadow-2xl text-white">
+                  RED<span className="text-red-500">WIRE</span>
                 </span>
               </div>
 
-              <div className="flex-1 flex items-center justify-center relative">
+              <div className="flex-1 flex items-center justify-center relative z-30">
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
                   className="w-16 h-16 rounded-full bg-red-600 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform cursor-pointer"
