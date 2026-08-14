@@ -416,12 +416,12 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
               {/* Resolution Picker */}
               <div>
                 <label className="text-xs text-slate-500 font-bold block mb-2">Resolution Quality</label>
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="grid grid-cols-3 gap-2 sm:gap-1.5">
                   {item.formats.map((res) => (
                     <button
                       key={res}
                       onClick={() => setSelectedRes(res)}
-                      className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`py-3 sm:py-2.5 rounded-xl text-xs sm:text-xs font-bold transition-all cursor-pointer ${
                         selectedRes === res
                           ? 'bg-red-600 text-white shadow-xs'
                           : 'bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
@@ -436,12 +436,12 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
               {/* Aspect Ratio Crop */}
               <div>
                 <label className="text-xs text-slate-500 font-bold block mb-2">Aspect Crop Ratio</label>
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="grid grid-cols-3 gap-2 sm:gap-1.5">
                   {['16:9', '9:16', '1:1'].map((aspect) => (
                     <button
                       key={aspect}
                       onClick={() => setSelectedAspect(aspect)}
-                      className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`py-3 sm:py-2.5 rounded-xl text-xs sm:text-xs font-bold transition-all cursor-pointer ${
                         selectedAspect === aspect
                           ? 'bg-red-600 text-white shadow-xs'
                           : 'bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
@@ -456,12 +456,12 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
               {/* File Format Picker */}
               <div>
                 <label className="text-xs text-slate-500 font-bold block mb-2">File Container Format</label>
-                <div className="grid grid-cols-4 gap-1.5">
+                <div className="grid grid-cols-4 gap-2 sm:gap-1.5">
                   {['MP4', 'MOV', 'ProRes', 'MXF'].map((fmt) => (
                     <button
                       key={fmt}
                       onClick={() => setSelectedFmt(fmt)}
-                      className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`py-3 sm:py-2 rounded-xl text-xs sm:text-xs font-bold transition-all cursor-pointer ${
                         selectedFmt === fmt
                           ? 'bg-red-600 text-white shadow-xs'
                           : 'bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
@@ -473,15 +473,13 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 </div>
               </div>
 
-
-
               {/* ACTION TRIGGER */}
               <div className="flex flex-col gap-2 pt-1">
                 {isLoggedIn ? (
                   <button
                     onClick={handleDownload}
                     disabled={downloading}
-                    className={`w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
+                    className={`w-full py-4 sm:py-3.5 rounded-xl text-xs sm:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
                       downloadSuccess
                         ? 'bg-emerald-600 text-white'
                         : 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/20'
@@ -503,7 +501,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={() => navigate('/login')}
-                      className="w-full py-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white transition-all cursor-pointer shadow-lg shadow-red-600/20"
+                      className="w-full py-4 sm:py-3.5 rounded-xl text-xs sm:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white transition-all cursor-pointer shadow-lg shadow-red-600/20"
                     >
                       <LogIn size={16} /> Sign In Required to Export & Download
                     </button>
