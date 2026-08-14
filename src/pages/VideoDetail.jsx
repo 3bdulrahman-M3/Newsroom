@@ -181,15 +181,13 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
 
             {/* Cinema Video Player / Preview Screen */}
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 aspect-video flex flex-col justify-between p-4 shadow-2xl group">
-              {/* Automatic REDWIRE Watermark Overlay: Shows ONLY when user is NOT logged in */}
-              {!isLoggedIn && (
-                <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white/80 backdrop-blur-md text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-white/40 shadow-xl z-30 flex items-center gap-1.5 select-none`}>
-                  <img src="/logo.png" alt="REDWIRE Logo" className="h-8 w-auto object-contain" />
-                  <span className="font-['Montserrat'] font-extrabold tracking-tight text-sm leading-none">
-                    RED<span className="text-red-600">WIRE</span>
-                  </span>
-                </div>
-              )}
+              {/* Always Visible REDWIRE Watermark Overlay */}
+              <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white/80 backdrop-blur-md text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-white/40 shadow-xl z-30 flex items-center select-none`}>
+                <img src="/logo.png" alt="REDWIRE Logo" className="h-8 w-auto object-contain" />
+                <span className="font-['Montserrat'] font-extrabold tracking-tight text-sm leading-none">
+                  RED<span className="text-red-600">WIRE</span>
+                </span>
+              </div>
 
               <div className="flex-1 flex items-center justify-center relative">
                 <button
