@@ -12,7 +12,7 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
   const isAr = language === 'ar';
 
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedSport, setSelectedSport] = useState('all');
+  const [selectedSubcat, setSelectedSubcat] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
   const [sortOrder, setSortOrder] = useState('latest');
   const [viewMode, setViewMode] = useState('grid');
@@ -25,12 +25,31 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
     { id: 'breaking', label: 'Breaking News', count: MEDIA_ITEMS.filter(v => v.category === 'breaking').length }
   ];
 
-  const sportsList = [
-    { id: 'all', label: 'All Sports' },
-    { id: 'football', label: 'Football' },
-    { id: 'tennis', label: 'Tennis' },
-    { id: 'motorsport', label: 'Motorsport / F1' }
-  ];
+  const subcategoriesMap = {
+    sports: [
+      { id: 'all', label: 'All Sports' },
+      { id: 'football', label: 'Football' },
+      { id: 'tennis', label: 'Tennis' },
+      { id: 'motorsport', label: 'Motorsport / F1' }
+    ],
+    politics: [
+      { id: 'all', label: 'All Topics' },
+      { id: 'summits', label: 'Summits & G7' },
+      { id: 'elections', label: 'Elections' },
+      { id: 'policy', label: 'AI & Policy' }
+    ],
+    entertainment: [
+      { id: 'all', label: 'All Genres' },
+      { id: 'cinema', label: 'Movies & Oscars' },
+      { id: 'music', label: 'Music Festivals' },
+      { id: 'redcarpet', label: 'Red Carpet' }
+    ],
+    breaking: [
+      { id: 'all', label: 'All Wire Alerts' },
+      { id: 'urgent', label: 'Urgent Bulletins' },
+      { id: 'global', label: 'Global News' }
+    ]
+  };
 
   const filteredItems = useMemo(() => {
     let result = [...MEDIA_ITEMS];
@@ -39,8 +58,11 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
       result = result.filter((v) => v.category === selectedCategory);
     }
 
-    if (selectedSport !== 'all') {
-      result = result.filter((v) => v.sport === selectedSport);
+    if (selectedSubcat !== 'all') {
+      result = result.filter((v) => 
+        v.sport === selectedSubcat || 
+        (v.tags && v.tags.some(t => t.toLowerCase().includes(selectedSubcat.toLowerCase())))
+      );
     }
 
     if (selectedFormat === '4k') result = result.filter((v) => v.formats.includes('4K'));
@@ -66,14 +88,19 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
     }
 
     return result;
-  }, [selectedCategory, selectedSport, selectedFormat, searchQuery, sortOrder]);
+  }, [selectedCategory, selectedSubcat, selectedFormat, searchQuery, sortOrder]);
+
+  const handleCategorySelect = (catId) => {
+    setSelectedCategory(catId);
+    setSelectedSubcat('all');
+  };
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans pt-16 flex">
       
       {/* ENTERPRISE MEDIA SIDEBAR */}
       <aside className="w-64 bg-slate-50 border-r border-slate-200 p-5 hidden md:flex flex-col gap-6 shrink-0 shadow-xs">
-        {/* Categories */}
+        {/* Categories (Main Sections in Sidebar) */}
         <div>
           <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-3 px-2 flex items-center gap-2">
             <FolderKanban size={14} className="text-red-600" /> Media Categories
@@ -82,7 +109,7 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => handleCategorySelect(cat.id)}
                 className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
                   selectedCategory === cat.id
                     ? 'bg-white text-red-600 border border-slate-200 shadow-xs'
@@ -100,39 +127,16 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
           </div>
         </div>
 
-        {/* Sports Taxonomy Filter */}
+        {/* Master Format Filter */}
         <div>
           <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-3 px-2">
-            Sports Taxonomy
-          </div>
-          <div className="flex flex-col gap-1">
-            {sportsList.map((sp) => (
-              <button
-                key={sp.id}
-                onClick={() => setSelectedSport(sp.id)}
-                className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  selectedSport === sp.id
-                    ? 'text-red-600 font-bold bg-red-50 border border-red-200'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {sp.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Resolution Filter */}
-        <div>
-          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-3 px-2">
-            Master Resolution
+            Master Format
           </div>
           <div className="flex flex-col gap-1">
             {[
               { id: 'all', label: 'All Resolutions' },
               { id: '4k', label: '4K Ultra HD' },
-              { id: '1080p', label: '1080p Full HD' },
-              { id: 'exclusive', label: 'Exclusives Only' }
+              { id: '1080p', label: '1080p Full HD' }
             ].map((f) => (
               <button
                 key={f.id}
@@ -153,6 +157,25 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
       {/* MAIN WORKSPACE CONTENT */}
       <main className="flex-1 p-6 md:p-8 w-full flex flex-col gap-6 bg-white">
         
+        {/* TOP TAXONOMY HORIZONTAL BAR (Rendered for current active category) */}
+        {selectedCategory !== 'all' && subcategoriesMap[selectedCategory] && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none bg-slate-50 p-2.5 rounded-2xl border border-slate-200 shadow-xs">
+            {subcategoriesMap[selectedCategory].map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => setSelectedSubcat(sub.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  selectedSubcat === sub.id
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* TOOLBAR & SEARCH */}
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
           
