@@ -225,125 +225,129 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
               </div>
             </div>
 
-            {/* Asset Metadata Specification Table (Directly Below Video Player) */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col gap-5">
-              <h3 className="text-xs uppercase font-bold tracking-wider text-slate-500 flex items-center gap-2">
-                <FileText size={15} className="text-red-600" /> Asset Specifications & Story Details
-              </h3>
+            {/* UNIFIED ASSET METADATA & SHOTLIST CONTAINER CARD */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col gap-7">
+              
+              {/* SECTION 1: Asset Specifications */}
+              <div className="flex flex-col gap-4">
+                <h3 className="text-xs uppercase font-bold tracking-wider text-slate-500 flex items-center gap-2">
+                  <FileText size={15} className="text-red-600" /> Asset Specifications & Metadata
+                </h3>
 
-              <div className="bg-slate-50/70 rounded-xl border border-slate-200 p-4 font-sans text-xs flex flex-col gap-3">
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Slug:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono select-all">
-                    {item.contentId || `RW-ASSET-${item.id}`} {item.title}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Arrival Date:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
-                    {item.date} 1:46 PM
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Creation Date:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
-                    {item.date} 1:46 PM
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Duration:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
-                    {item.duration || '0:39'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Video ID:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
-                    5377999{item.id}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Type:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono uppercase">
-                    {item.type || 'VOSOT'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Usage:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900">
-                    Newsroom Ready
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Restriction:</span>
-                  <div className="sm:col-span-9 flex flex-col gap-1 text-slate-700">
-                    <p>{item.restrictions || 'No additional restrictions beyond those terms outlined in your license agreement.'}</p>
+                <div className="bg-slate-50/70 rounded-xl border border-slate-200 p-4 font-sans text-xs flex flex-col gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Slug:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono select-all">
+                      {item.contentId || `RW-ASSET-${item.id}`} {item.title}
+                    </span>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Source:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900">
-                    {item.source || 'ASSOCIATED PRESS / REDWIRE'}
-                  </span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Arrival Date:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
+                      {item.date} 1:46 PM
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Location:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900">
-                    {item.location || 'New York, USA'}
-                  </span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Creation Date:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
+                      {item.date} 1:46 PM
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Subjects:</span>
-                  <span className="sm:col-span-9 font-semibold text-red-600">
-                    {item.tags ? item.tags.join(', ') : 'Sports, News'}
-                  </span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Duration:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
+                      {item.duration || '0:39'}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">People Mentioned:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900">
-                    {item.peopleMentioned ? item.peopleMentioned.join(', ') : 'Travis Kelce, Ryan Reynolds, Hugh Jackman, Blake Lively, Sophie Turner, Taylor Swift'}
-                  </span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Video ID:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
+                      5377999{item.id}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Friendly Key:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
-                    4940436438
-                  </span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Type:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono uppercase">
+                      {item.type || 'VOSOT'}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-0.5">
-                  <span className="sm:col-span-3 font-bold text-slate-500">Copyright:</span>
-                  <span className="sm:col-span-9 font-semibold text-slate-700">
-                    Copyright 2025 REDWIRE / Associated Press. All rights reserved.
-                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Usage:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900">
+                      Newsroom Ready
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Restriction:</span>
+                    <div className="sm:col-span-9 flex flex-col gap-1 text-slate-700">
+                      <p>{item.restrictions || 'No additional restrictions beyond those terms outlined in your license agreement.'}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Source:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900">
+                      {item.source || 'ASSOCIATED PRESS / REDWIRE'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Location:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900">
+                      {item.location || 'New York, USA'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Subjects:</span>
+                    <span className="sm:col-span-9 font-semibold text-red-600">
+                      {item.tags ? item.tags.join(', ') : 'Sports, News'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">People Mentioned:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900">
+                      {item.peopleMentioned ? item.peopleMentioned.join(', ') : 'Travis Kelce, Ryan Reynolds, Hugh Jackman, Blake Lively, Sophie Turner, Taylor Swift'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Friendly Key:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-900 font-mono">
+                      4940436438
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-0.5">
+                    <span className="sm:col-span-3 font-bold text-slate-500">Copyright:</span>
+                    <span className="sm:col-span-9 font-semibold text-slate-700">
+                      Copyright 2025 REDWIRE / Associated Press. All rights reserved.
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* DEDICATED SHOTLIST CONTAINER CARD */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col gap-6">
+              {/* SECTION 2: Shotlist */}
+              <div className="border-t border-slate-200 pt-6 flex flex-col gap-6">
                 <div className="border-b border-slate-200 pb-3">
-                  <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-2 font-mono">
-                    <Layers size={16} className="text-red-600" /> Shotlist
+                  <h3 className="text-xs uppercase font-bold tracking-wider text-slate-500 flex items-center gap-2 font-mono">
+                    <Layers size={15} className="text-red-600" /> Shotlist
                   </h3>
                 </div>
 
                 {/* Broadcast Story Summary */}
                 <div>
                   <h4 className="text-xs uppercase font-bold tracking-wider text-slate-500 mb-2">Broadcast Story Summary</h4>
-                  <p className="text-slate-700 text-xs leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200 font-sans">
-                    {item.desc || item.script}
+                  <p className="text-slate-600 text-xs leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200 font-sans">
+                    {item.script || item.desc}
                   </p>
                 </div>
 
@@ -351,7 +355,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 {item.timestamps && item.timestamps.length > 0 && (
                   <div>
                     <h4 className="text-xs uppercase font-bold tracking-wider text-slate-500 mb-3 flex items-center gap-2">
-                      <Layers size={14} className="text-red-600" /> Shot Markers & Timestamps
+                       Shot Markers & Timestamps
                     </h4>
                     <div className="flex flex-col gap-2">
                       {item.timestamps.map((ts, i) => {
@@ -384,6 +388,16 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* SECTION 3: STORYLINE */}
+              <div className="border-t border-slate-200 pt-6">
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 mb-2 font-mono">
+                  STORYLINE:
+                </h4>
+                <p className="text-slate-800 text-xs font-semibold leading-relaxed bg-slate-100/80 p-4 rounded-xl border border-slate-200/90 font-sans select-all">
+                  {item.desc || item.script}
+                </p>
               </div>
             </div>
           </div>
