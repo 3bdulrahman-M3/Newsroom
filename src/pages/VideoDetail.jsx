@@ -285,7 +285,6 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                   <span className="sm:col-span-3 font-bold text-slate-500">Restriction:</span>
                   <div className="sm:col-span-9 flex flex-col gap-1 text-slate-700">
                     <p>{item.restrictions || 'No additional restrictions beyond those terms outlined in your license agreement.'}</p>
-                    <span className="text-[11px] text-slate-500 italic">See Script for additional details.</span>
                   </div>
                 </div>
 
