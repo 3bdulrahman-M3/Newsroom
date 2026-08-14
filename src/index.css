@@ -13,14 +13,12 @@ header, footer {
   border-radius: 0px !important;
 }
 
-/* Global Light Theme Typography & Palette */
+/* Global Light Theme Typography & Layout Normalization */
 :root {
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Bebas Neue', cursive;
   --font-mono: 'JetBrains Mono', monospace;
-  --bg-main: #ffffff;
-  --text-main: #0f172a;
-  --accent-red: #dc2626;
+  --font-brand: 'Montserrat', sans-serif;
 }
 
 body {
@@ -29,26 +27,54 @@ body {
   background-color: #ffffff;
   color: #0f172a;
   font-family: var(--font-sans);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
-/* Typography styles */
+/* Base Headings Line-height and Letter-spacing */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+/* System Font Utility Classes */
+.font-sans {
+  font-family: var(--font-sans) !important;
+}
+
+.font-brand {
+  font-family: var(--font-brand) !important;
 }
 
 .font-display {
-  font-family: var(--font-display);
+  font-family: var(--font-display) !important;
 }
 
 .font-mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono) !important;
 }
 
-/* Hide scrollbars */
+/* Custom Utilities for crisp spacing */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Scrollbars */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
