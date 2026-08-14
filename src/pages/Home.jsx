@@ -10,6 +10,7 @@ export default function Home({ favorites, toggleFavorite }) {
   const navigate = useNavigate();
   const { isSubscriber, language } = useUser();
   const isAr = language === 'ar';
+  const [playingVideoId, setPlayingVideoId] = useState(null);
 
   const featuredItem = MEDIA_ITEMS[0];
   const latestMedia = MEDIA_ITEMS.slice(1, 5);
@@ -58,20 +59,39 @@ export default function Home({ favorites, toggleFavorite }) {
                 onClick={() => navigate(`/video/${featuredItem.id}`)}
                 className="relative h-56 sm:h-auto sm:aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group cursor-pointer shadow-sm"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
-                <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg pl-0.5">
-                    <Play size={20} fill="currentColor" />
-                  </div>
-                </div>
-                <div className="absolute bottom-3 left-3 right-3 z-20">
-                  <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
-                    {featuredItem.category}
-                  </span>
-                  <h4 className="text-xs font-bold text-white mt-1.5 line-clamp-1 drop-shadow-md">
-                    {featuredItem.title}
-                  </h4>
-                </div>
+                {playingVideoId === featuredItem.id ? (
+                  <video
+                    src={featuredItem.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-cover relative z-30"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
+                    <div className="absolute inset-0 flex items-center justify-center z-20">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPlayingVideoId(featuredItem.id);
+                        }}
+                        className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg pl-0.5 cursor-pointer"
+                        title="Play Video directly in card"
+                      >
+                        <Play size={20} fill="currentColor" />
+                      </button>
+                    </div>
+                    <div className="absolute bottom-3 left-3 right-3 z-20 pointer-events-none">
+                      <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
+                        {featuredItem.category}
+                      </span>
+                      <h4 className="text-xs font-bold text-white mt-1.5 line-clamp-1 drop-shadow-md">
+                        {featuredItem.title}
+                      </h4>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-center text-[11px] font-mono text-slate-700">
@@ -102,37 +122,59 @@ export default function Home({ favorites, toggleFavorite }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {latestMedia.map((item) => {
               const isFav = favorites?.includes(item.id);
+              const isPlaying = playingVideoId === item.id;
               return (
                 <div
                   key={item.id}
                   className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-slate-300 transition-all flex flex-col justify-between group shadow-xs"
                 >
                   <div onClick={() => navigate(`/video/${item.id}`)} className="cursor-pointer">
-                    <div className="relative aspect-video bg-slate-100 overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow pl-0.5">
-                          <Play size={16} fill="currentColor" />
-                        </div>
-                      </div>
-                      <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur text-slate-900 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">
-                        {item.category}
-                      </span>
-                      {item.duration && (
-                        <span className="absolute bottom-2.5 right-2.5 bg-white/95 text-slate-900 text-[10px] font-mono font-bold px-2 py-0.5 rounded shadow-xs border border-slate-200">
-                          {item.duration}
-                        </span>
-                      )}
+                    <div 
+                      className="relative aspect-video bg-slate-100 overflow-hidden cursor-pointer"
+                    >
+                      {isPlaying ? (
+                        <video
+                          src={item.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
+                          controls
+                          autoPlay
+                          className="w-full h-full object-cover relative z-30"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPlayingVideoId(item.id);
+                              }}
+                              className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow pl-0.5 cursor-pointer"
+                              title="Play Video"
+                            >
+                              <Play size={16} fill="currentColor" />
+                            </button>
+                          </div>
+                          <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur text-slate-900 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">
+                            {item.category}
+                          </span>
+                          {item.duration && (
+                            <span className="absolute bottom-2.5 right-2.5 bg-white/95 text-slate-900 text-[10px] font-mono font-bold px-2 py-0.5 rounded shadow-xs border border-slate-200">
+                              {item.duration}
+                            </span>
+                          )}
 
-                      {/* Favorite button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(item.id);
-                        }}
-                        className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-700 flex items-center justify-center shadow border border-slate-200"
-                      >
-                        <Heart size={14} className={isFav ? 'text-red-600 fill-red-600' : ''} />
-                      </button>
+                          {/* Favorite button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(item.id);
+                            }}
+                            className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-700 flex items-center justify-center shadow border border-slate-200"
+                          >
+                            <Heart size={14} className={isFav ? 'text-red-600 fill-red-600' : ''} />
+                          </button>
+                        </>
+                      )}
                     </div>
 
                     <div className="p-4 flex flex-col gap-3 cursor-pointer" onClick={() => navigate(`/video/${item.id}`)}>

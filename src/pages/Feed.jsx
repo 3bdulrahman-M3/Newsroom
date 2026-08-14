@@ -6,7 +6,7 @@ import {
   Search, Play, Download, Grid, List, FolderKanban, Heart, Lock, Calendar, Clock, Layers, ChevronDown
 } from 'lucide-react';
 
-export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFavorite }) {
+export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFavorite, onPlayPreview }) {
   const navigate = useNavigate();
   const { isSubscriber, language } = useUser();
   const isAr = language === 'ar';
@@ -17,6 +17,7 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
   const [sortOrder, setSortOrder] = useState('latest');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
+  const [playingVideoId, setPlayingVideoId] = useState(null);
 
   const categories = [
     { id: 'all', label: 'All Media', count: MEDIA_ITEMS.length },
@@ -286,6 +287,7 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => {
               const isFav = favorites?.includes(item.id);
+              const isPlaying = playingVideoId === item.id;
               return (
                 <div
                   key={item.id}
@@ -293,32 +295,51 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
                 >
                   <div>
                     <div className="relative aspect-video bg-slate-100 overflow-hidden cursor-pointer" onClick={() => navigate(`/video/${item.id}`)}>
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow">
-                          <Play size={16} fill="currentColor" className="ml-0.5" />
-                        </div>
-                      </div>
-                      <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-900 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">
-                        {item.category}
-                      </span>
-                      {item.duration && (
-                        <span className="absolute bottom-3 right-3 bg-white/95 text-slate-900 text-[10px] font-mono font-bold px-2 py-0.5 rounded shadow-xs border border-slate-200">
-                          {item.duration}
-                        </span>
-                      )}
+                      {isPlaying ? (
+                        <video
+                          src={item.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
+                          controls
+                          autoPlay
+                          className="w-full h-full object-cover relative z-30"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPlayingVideoId(item.id);
+                              }}
+                              className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow pl-0.5 cursor-pointer"
+                              title="Play Video"
+                            >
+                              <Play size={16} fill="currentColor" />
+                            </button>
+                          </div>
+                          <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-900 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">
+                            {item.category}
+                          </span>
+                          {item.duration && (
+                            <span className="absolute bottom-3 right-3 bg-white/95 text-slate-900 text-[10px] font-mono font-bold px-2 py-0.5 rounded shadow-xs border border-slate-200">
+                              {item.duration}
+                            </span>
+                          )}
 
-                      {/* Favorite Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(item.id);
-                        }}
-                        className={`absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center shadow transition-transform hover:scale-110 border ${
-                          isFav ? 'bg-white text-red-600 border-red-200' : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white hover:text-red-600'
-                        }`}
-                      >
-                        <Heart size={15} className={isFav ? 'fill-red-600' : ''} />
-                      </button>
+                          {/* Favorite Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(item.id);
+                            }}
+                            className={`absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center shadow transition-transform hover:scale-110 border ${
+                              isFav ? 'bg-white text-red-600 border-red-200' : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white hover:text-red-600'
+                            }`}
+                          >
+                            <Heart size={15} className={isFav ? 'fill-red-600' : ''} />
+                          </button>
+                        </>
+                      )}
                     </div>
 
                     <div className="p-4 flex flex-col gap-3 cursor-pointer" onClick={() => navigate(`/video/${item.id}`)}>

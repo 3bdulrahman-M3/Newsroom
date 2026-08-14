@@ -17,6 +17,7 @@ import Login from './pages/Login';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [previewVideo, setPreviewVideo] = useState(null);
   
   // Favorites State
   const [favorites, setFavorites] = useState(() => {
@@ -36,7 +37,7 @@ export default function App() {
     <ThemeProvider>
       <UserProvider>
         <Router>
-          <div className="min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
+          <div className="min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white relative">
           <Navbar 
             searchQuery={searchQuery} 
             setSearchQuery={setSearchQuery} 
@@ -46,7 +47,7 @@ export default function App() {
             <Routes>
               <Route 
                 path="/" 
-                element={<Home favorites={favorites} toggleFavorite={toggleFavorite} />} 
+                element={<Home favorites={favorites} toggleFavorite={toggleFavorite} onPlayPreview={(item) => setPreviewVideo(item)} />} 
               />
               <Route
                 path="/feed"
@@ -56,6 +57,7 @@ export default function App() {
                     setSearchQuery={setSearchQuery}
                     favorites={favorites}
                     toggleFavorite={toggleFavorite}
+                    onPlayPreview={(item) => setPreviewVideo(item)}
                   />
                 }
               />
@@ -71,6 +73,31 @@ export default function App() {
             </Routes>
           </div>
           <Footer />
+
+          {/* Quick External Video Preview Modal */}
+          {previewVideo && (
+            <div className="fixed inset-0 z-[300] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+              <div className="bg-slate-950 border border-slate-800 rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl relative flex flex-col">
+                <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+                  <h3 className="text-sm font-bold text-white line-clamp-1">{previewVideo.title}</h3>
+                  <button 
+                    onClick={() => setPreviewVideo(null)}
+                    className="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-600 text-white flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                  <video 
+                    controls 
+                    autoPlay 
+                    src={previewVideo.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Router>
     </UserProvider>
