@@ -59,8 +59,10 @@ export default function Home({ favorites, toggleFavorite }) {
                 className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group cursor-pointer shadow-sm"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
-                <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 group-hover:scale-110 transition-transform shadow-lg">
-                  <Play size={20} fill="currentColor" className="ml-0.5" />
+                <div className="absolute inset-0 flex items-center justify-center z-20">
+                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                    <Play size={20} fill="currentColor" className="ml-0.5" />
+                  </div>
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 z-20">
                   <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">

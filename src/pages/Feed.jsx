@@ -226,8 +226,10 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
                 >
                   <div>
                     <div className="relative aspect-video bg-slate-100 overflow-hidden cursor-pointer" onClick={() => navigate(`/video/${item.id}`)}>
-                      <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 group-hover:scale-110 transition-transform shadow">
-                        <Play size={16} fill="currentColor" className="ml-0.5" />
+                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                        <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow">
+                          <Play size={16} fill="currentColor" className="ml-0.5" />
+                        </div>
                       </div>
                       <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-slate-900 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">
                         {item.category}
