@@ -180,11 +180,11 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
             </div>
 
             {/* Cinema Video Player / Preview Screen */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 aspect-video flex flex-col justify-between p-4 shadow-2xl group">
-              {/* Center Screen Subtly Transparent REDWIRE Watermark Overlay */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-black z-10 flex items-center select-none pointer-events-none opacity-25 scale-[1.7] sm:scale-[2.1] transition-all">
-                <img src="/logo.png" alt="REDWIRE Logo" className="h-12 md:h-14 w-auto object-contain filter drop-shadow-2xl opacity-75" />
-                <span className="font-['Montserrat'] font-extrabold tracking-wider text-2xl md:text-4xl leading-none drop-shadow-2xl text-white">
+            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 h-64 sm:h-auto sm:aspect-video flex flex-col justify-between p-4 shadow-2xl group">
+              {/* Mobile-Optimized Center Screen Transparent REDWIRE Watermark Overlay */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-black z-10 flex items-center gap-1.5 sm:gap-2.5 select-none pointer-events-none opacity-25 scale-110 sm:scale-150 md:scale-[2.1] transition-all">
+                <img src="/logo.png" alt="REDWIRE Logo" className="h-7 sm:h-10 md:h-14 w-auto object-contain filter drop-shadow-2xl opacity-75" />
+                <span className="font-['Montserrat'] font-extrabold tracking-wider text-base sm:text-2xl md:text-4xl leading-none drop-shadow-2xl text-white">
                   RED<span className="text-red-500">WIRE</span>
                 </span>
               </div>

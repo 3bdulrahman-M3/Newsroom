@@ -56,12 +56,12 @@ export default function Home({ favorites, toggleFavorite }) {
 
               <div 
                 onClick={() => navigate(`/video/${featuredItem.id}`)}
-                className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group cursor-pointer shadow-sm"
+                className="relative h-56 sm:h-auto sm:aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group cursor-pointer shadow-sm"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
                 <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                    <Play size={20} fill="currentColor" className="ml-0.5" />
+                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg pl-0.5">
+                    <Play size={20} fill="currentColor" />
                   </div>
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 z-20">
@@ -110,8 +110,8 @@ export default function Home({ favorites, toggleFavorite }) {
                   <div onClick={() => navigate(`/video/${item.id}`)} className="cursor-pointer">
                     <div className="relative aspect-video bg-slate-100 overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow">
-                          <Play size={16} fill="currentColor" className="ml-0.5" />
+                        <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow pl-0.5">
+                          <Play size={16} fill="currentColor" />
                         </div>
                       </div>
                       <span className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur text-slate-900 text-[9px] font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">
