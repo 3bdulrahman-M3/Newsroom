@@ -56,9 +56,9 @@ export default function Home({ favorites, toggleFavorite }) {
 
               <div 
                 onClick={() => navigate(`/video/${featuredItem.id}`)}
-                className="relative aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group cursor-pointer"
+                className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group cursor-pointer shadow-sm"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent z-10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
                 <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 group-hover:scale-110 transition-transform shadow-lg">
                   <Play size={20} fill="currentColor" className="ml-0.5" />
                 </div>
@@ -66,7 +66,7 @@ export default function Home({ favorites, toggleFavorite }) {
                   <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
                     {featuredItem.category}
                   </span>
-                  <h4 className="text-xs font-bold text-white mt-1 line-clamp-1">
+                  <h4 className="text-xs font-bold text-white mt-1.5 line-clamp-1 drop-shadow-md">
                     {featuredItem.title}
                   </h4>
                 </div>
