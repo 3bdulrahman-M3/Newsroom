@@ -181,12 +181,14 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
 
             {/* Cinema Video Player / Preview Screen */}
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 h-64 sm:h-auto sm:aspect-video flex flex-col justify-between p-4 shadow-2xl group">
-              {/* Mobile-Optimized Center Screen Transparent REDWIRE Watermark Overlay */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-black z-10 flex items-center gap-1.5 sm:gap-2.5 select-none pointer-events-none opacity-25 scale-110 sm:scale-150 md:scale-[2.1] transition-all">
-                <img src="/logo.png" alt="REDWIRE Logo" className="h-7 sm:h-10 md:h-14 w-auto object-contain filter drop-shadow-2xl opacity-75" />
-                <span className="font-['Montserrat'] font-extrabold tracking-wider text-base sm:text-2xl md:text-4xl leading-none drop-shadow-2xl text-white">
-                  RED<span className="text-red-500">WIRE</span>
-                </span>
+              {/* Bulletproof Centered REDWIRE Watermark Overlay */}
+              <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none select-none">
+                <div className="flex items-center gap-2 sm:gap-3 opacity-25 scale-125 sm:scale-150 md:scale-[2.1] transform-gpu">
+                  <img src="/logo.png" alt="REDWIRE Logo" className="h-8 sm:h-11 md:h-14 w-auto object-contain filter drop-shadow-2xl opacity-80" />
+                  <span className="font-['Montserrat'] font-extrabold tracking-wider text-lg sm:text-2xl md:text-4xl leading-none drop-shadow-2xl text-white">
+                    RED<span className="text-red-500">WIRE</span>
+                  </span>
+                </div>
               </div>
 
               <div className="flex-1 flex items-center justify-center relative z-30">
@@ -479,22 +481,26 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                   <button
                     onClick={handleDownload}
                     disabled={downloading}
-                    className={`w-full py-4 sm:py-3.5 rounded-xl text-xs sm:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
+                    className={`w-full py-3.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md leading-snug ${
                       downloadSuccess
                         ? 'bg-emerald-600 text-white'
                         : 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/20'
                     }`}
                   >
                     {downloading ? (
-                      <span>⏳ Exporting Master File...</span>
+                      <span className="flex items-center gap-1.5">⏳ Exporting Master File...</span>
                     ) : downloadSuccess ? (
-                      <>
-                        <Check size={16} /> Asset Downloaded Successfully!
-                      </>
+                      <span className="flex items-center gap-1.5">
+                        <Check size={16} className="shrink-0" /> Asset Downloaded Successfully!
+                      </span>
                     ) : (
-                      <>
-                        <Download size={16} /> Export Master Package ({selectedRes} • {selectedAspect} • {selectedFmt})
-                      </>
+                      <span className="flex items-center justify-center gap-1.5 text-center flex-wrap">
+                        <Download size={16} className="shrink-0" />
+                        <span>Export Master Package</span>
+                        <span className="bg-red-700/80 px-2 py-0.5 rounded text-[10px] font-mono tracking-normal normal-case">
+                          {selectedRes} • {selectedAspect} • {selectedFmt}
+                        </span>
+                      </span>
                     )}
                   </button>
                 ) : (
