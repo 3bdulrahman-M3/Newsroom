@@ -183,7 +183,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 aspect-video flex flex-col justify-between p-4 shadow-2xl group">
               {/* Apply REDWIRE Watermark Overlay */}
               {customLogo && (
-                <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-xl z-30 flex items-center select-none`}>
+                <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white/80 backdrop-blur-md text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-white/40 shadow-xl z-30 flex items-center select-none`}>
                   <img src="/logo.png" alt="REDWIRE Logo" className="h-8 w-auto object-contain" />
                   <span className="font-['Montserrat'] font-extrabold tracking-tight text-sm leading-none">
                     RED<span className="text-red-600">WIRE</span>
