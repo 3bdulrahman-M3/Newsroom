@@ -4,14 +4,13 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   // User Authentication State
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('redwire_user');
-    return saved ? JSON.parse(saved) : { name: 'Sarah Jenkins', email: 's.jenkins@newsroom.com', avatar: 'SJ' };
+  const [user, setUser] = useState({
+    name: 'Abdelrhman Adel',
+    email: 'abdelrhman.adel@newsroom.com',
+    avatar: 'AA'
   });
 
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('redwire_logged_in') === 'true' || true;
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   // Language Mode: English only
   const [language, setLanguage] = useState('en');

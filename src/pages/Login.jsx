@@ -12,7 +12,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginUser(email || 's.jenkins@newsroom.com');
+    loginUser(email || 'abdelrhman.adel@newsroom.com');
     navigate('/feed');
   };
 
