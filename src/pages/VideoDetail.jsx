@@ -181,9 +181,9 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
 
             {/* Cinema Video Player / Preview Screen */}
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 aspect-video flex flex-col justify-between p-4 shadow-2xl group">
-              {/* Apply REDWIRE Watermark Overlay */}
-              {customLogo && (
-                <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white/80 backdrop-blur-md text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-white/40 shadow-xl z-30 flex items-center select-none`}>
+              {/* Automatic REDWIRE Watermark Overlay: Shows ONLY when user is NOT logged in */}
+              {!isLoggedIn && (
+                <div className={`absolute ${logoPos === 'top-right' ? 'top-4 right-4' : 'top-4 left-4'} bg-white/80 backdrop-blur-md text-slate-900 font-black text-xs px-3.5 py-1.5 rounded-xl border border-white/40 shadow-xl z-30 flex items-center gap-1.5 select-none`}>
                   <img src="/logo.png" alt="REDWIRE Logo" className="h-8 w-auto object-contain" />
                   <span className="font-['Montserrat'] font-extrabold tracking-tight text-sm leading-none">
                     RED<span className="text-red-600">WIRE</span>
@@ -347,58 +347,7 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
                 </div>
               </div>
 
-              {/* APPLY WATERMARK OVERLAY BLOCK */}
-              <div className="border-t border-b border-slate-200 py-4 flex flex-col gap-3">
-                <div className="flex flex-col gap-1 text-xs">
-                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                    <Sparkles size={14} className="text-amber-500" /> Apply REDWIRE Watermark
-                  </span>
-                  <span className="text-[10px] text-slate-500">
-                    Overlay REDWIRE branding watermark on media asset before exporting
-                  </span>
-                </div>
 
-                <div className="flex flex-col gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                  <label className="flex items-center justify-between text-xs text-slate-900 cursor-pointer font-bold">
-                    <span>Enable REDWIRE Watermark</span>
-                    <input
-                      type="checkbox"
-                      checked={customLogo}
-                      onChange={(e) => setCustomLogo(e.target.checked)}
-                      className="w-4 h-4 accent-red-600 cursor-pointer"
-                    />
-                  </label>
-
-                  {customLogo && (
-                    <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-200">
-                      {/* Position Selector */}
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="text-[10px] text-slate-500 font-bold">Watermark Position</span>
-                        <div className="flex gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setLogoPos('top-right')}
-                            className={`text-[10px] font-bold px-2 py-1 rounded cursor-pointer ${
-                              logoPos === 'top-right' ? 'bg-red-600 text-white' : 'bg-white text-slate-700 border border-slate-200'
-                            }`}
-                          >
-                            Top Right
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setLogoPos('top-left')}
-                            className={`text-[10px] font-bold px-2 py-1 rounded cursor-pointer ${
-                              logoPos === 'top-left' ? 'bg-red-600 text-white' : 'bg-white text-slate-700 border border-slate-200'
-                            }`}
-                          >
-                            Top Left
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
 
               {/* ACTION TRIGGER */}
               <div className="flex flex-col gap-2 pt-1">
