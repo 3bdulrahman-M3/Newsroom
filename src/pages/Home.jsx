@@ -56,8 +56,7 @@ export default function Home({ favorites, toggleFavorite }) {
               </div>
 
               <div 
-                onClick={() => navigate(`/video/${featuredItem.id}`)}
-                className="relative h-56 sm:h-auto sm:aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group cursor-pointer shadow-sm"
+                className="relative h-56 sm:h-auto sm:aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group shadow-sm"
               >
                 {playingVideoId === featuredItem.id ? (
                   <video
@@ -65,36 +64,55 @@ export default function Home({ favorites, toggleFavorite }) {
                     controls
                     autoPlay
                     className="w-full h-full object-cover relative z-30"
-                    onClick={(e) => e.stopPropagation()}
                   />
                 ) : (
                   <>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
-                    <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <div 
+                      onClick={() => navigate(`/video/${featuredItem.id}`)}
+                      className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10 cursor-pointer"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setPlayingVideoId(featuredItem.id);
                         }}
-                        className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg pl-0.5 cursor-pointer"
-                        title="Play Video directly in card"
+                        className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg pl-0.5 cursor-pointer pointer-events-auto"
+                        title="Play Video directly"
                       >
                         <Play size={20} fill="currentColor" />
                       </button>
-                    </div>
-                    <div className="absolute bottom-3 left-3 right-3 z-20 pointer-events-none">
-                      <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
-                        {featuredItem.category}
-                      </span>
-                      <h4 className="text-xs font-bold text-white mt-1.5 line-clamp-1 drop-shadow-md">
-                        {featuredItem.title}
-                      </h4>
                     </div>
                   </>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-center text-[11px] font-mono text-slate-700">
+              {/* Title & Navigation Link (Directly Below Video) */}
+              <div 
+                onClick={() => navigate(`/video/${featuredItem.id}`)}
+                className="flex flex-col gap-2 p-1 cursor-pointer group/title"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-bold bg-red-600 text-white px-2 py-0.5 rounded uppercase tracking-wider">
+                    {featuredItem.category}
+                  </span>
+                  <span className="text-[10px] font-semibold text-slate-400 font-mono">
+                    {featuredItem.date}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <h4 className="text-sm font-bold text-slate-900 group-hover/title:text-red-600 transition-colors line-clamp-2 leading-snug">
+                    {featuredItem.title}
+                  </h4>
+                  <div className="shrink-0 bg-slate-100 group-hover/title:bg-red-600 group-hover/title:text-white text-slate-700 p-2 rounded-xl border border-slate-200 transition-all flex items-center gap-1 text-xs font-bold">
+                    <span>View Asset</span>
+                    <ArrowRight size={14} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-center text-[11px] font-mono text-slate-700 pt-1">
                 <div className="bg-slate-100 p-2 rounded-lg border border-slate-200">
                   <span className="block text-slate-400 text-[9px] uppercase font-bold">Duration</span>
                   {featuredItem.duration}

@@ -181,11 +181,11 @@ export default function VideoDetail({ favorites, toggleFavorite }) {
 
             {/* Cinema Video Player / Preview Screen */}
             <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 h-64 sm:h-auto sm:aspect-video flex flex-col justify-between p-4 shadow-2xl group">
-              {/* Clean Standard Centered REDWIRE Watermark Overlay */}
+              {/* Clean Slightly Larger Centered REDWIRE Watermark Overlay */}
               <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none select-none">
-                <div className="flex items-center gap-2 sm:gap-2.5 opacity-25">
-                  <img src="/logo.png" alt="REDWIRE Logo" className="h-7 sm:h-9 md:h-11 w-auto object-contain filter drop-shadow-lg opacity-80" />
-                  <span className="font-['Montserrat'] font-extrabold tracking-wider text-base sm:text-xl md:text-3xl leading-none drop-shadow-xl text-white">
+                <div className="flex items-center gap-2.5 sm:gap-3.5 opacity-25">
+                  <img src="/logo.png" alt="REDWIRE Logo" className="h-9 sm:h-12 md:h-16 w-auto object-contain filter drop-shadow-xl opacity-85" />
+                  <span className="font-['Montserrat'] font-extrabold tracking-wider text-xl sm:text-3xl md:text-4xl leading-none drop-shadow-2xl text-white">
                     RED<span className="text-red-500">WIRE</span>
                   </span>
                 </div>
