@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { MEDIA_ITEMS } from '../data/mediaData';
 import { 
-  Play, Download, ArrowRight, Sparkles, TrendingUp, Heart, Flame, Calendar, Clock, Layers
+  Play, Pause, Download, ArrowRight, Sparkles, TrendingUp, Heart, Flame, Calendar, Clock, Layers
 } from 'lucide-react';
 
 export default function Home({ favorites, toggleFavorite }) {
@@ -59,12 +59,25 @@ export default function Home({ favorites, toggleFavorite }) {
                 className="relative h-56 sm:h-auto sm:aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800 group shadow-sm"
               >
                 {playingVideoId === featuredItem.id ? (
-                  <video
-                    src={featuredItem.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
-                    controls
-                    autoPlay
-                    className="w-full h-full object-cover relative z-30"
-                  />
+                  <div className="relative w-full h-full bg-slate-950 flex flex-col justify-between p-3 shadow-2xl group/cardplayer">
+                    {/* Actual HTML5 Video Element */}
+                    <video
+                      src={featuredItem.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
+                      controls
+                      autoPlay
+                      className="absolute inset-0 w-full h-full object-cover z-0"
+                    />
+
+                    {/* Transparent Watermark overlay on real video */}
+                    <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none select-none">
+                      <div className="flex items-center gap-2 opacity-25">
+                        <img src="/logo.png" alt="REDWIRE Logo" className="h-8 w-auto object-contain filter drop-shadow-md opacity-80" />
+                        <span className="font-['Montserrat'] font-extrabold tracking-wider text-base leading-none drop-shadow-lg text-white">
+                          RED<span className="text-red-500">WIRE</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <div 
@@ -151,13 +164,25 @@ export default function Home({ favorites, toggleFavorite }) {
                       className="relative aspect-video bg-slate-100 overflow-hidden cursor-pointer"
                     >
                       {isPlaying ? (
-                        <video
-                          src={item.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
-                          controls
-                          autoPlay
-                          className="w-full h-full object-cover relative z-30"
-                          onClick={(e) => e.stopPropagation()}
-                        />
+                        <div className="relative w-full h-full bg-slate-950 flex flex-col justify-between p-2 shadow-2xl group/cardplayer">
+                          {/* Actual HTML5 Video Element */}
+                          <video
+                            src={item.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
+                            controls
+                            autoPlay
+                            className="absolute inset-0 w-full h-full object-cover z-0"
+                          />
+
+                          {/* Transparent Watermark overlay on real video */}
+                          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none select-none">
+                            <div className="flex items-center gap-1.5 opacity-25">
+                              <img src="/logo.png" alt="REDWIRE Logo" className="h-6 w-auto object-contain filter drop-shadow-md opacity-80" />
+                              <span className="font-['Montserrat'] font-extrabold tracking-wider text-xs leading-none drop-shadow-lg text-white">
+                                RED<span className="text-red-500">WIRE</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       ) : (
                         <>
                           <div className="absolute inset-0 flex items-center justify-center z-10">

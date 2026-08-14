@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MEDIA_ITEMS } from '../data/mediaData';
 import { useUser } from '../context/UserContext';
 import { 
-  Search, Play, Download, Grid, List, FolderKanban, Heart, Lock, Calendar, Clock, Layers, ChevronDown
+  Search, Play, Pause, Download, Grid, List, FolderKanban, Heart, Lock, Calendar, Clock, Layers, ChevronDown
 } from 'lucide-react';
 
 export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFavorite, onPlayPreview }) {
@@ -296,13 +296,25 @@ export default function Feed({ searchQuery, setSearchQuery, favorites, toggleFav
                   <div>
                     <div className="relative aspect-video bg-slate-100 overflow-hidden cursor-pointer" onClick={() => navigate(`/video/${item.id}`)}>
                       {isPlaying ? (
-                        <video
-                          src={item.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
-                          controls
-                          autoPlay
-                          className="w-full h-full object-cover relative z-30"
-                          onClick={(e) => e.stopPropagation()}
-                        />
+                        <div className="relative w-full h-full bg-slate-950 flex flex-col justify-between p-2 shadow-2xl group/cardplayer">
+                          {/* Actual HTML5 Video Element */}
+                          <video
+                            src={item.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}
+                            controls
+                            autoPlay
+                            className="absolute inset-0 w-full h-full object-cover z-0"
+                          />
+
+                          {/* Transparent Watermark overlay on real video */}
+                          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none select-none">
+                            <div className="flex items-center gap-1.5 opacity-25">
+                              <img src="/logo.png" alt="REDWIRE Logo" className="h-6 w-auto object-contain filter drop-shadow-md opacity-80" />
+                              <span className="font-['Montserrat'] font-extrabold tracking-wider text-xs leading-none drop-shadow-lg text-white">
+                                RED<span className="text-red-500">WIRE</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       ) : (
                         <>
                           <div className="absolute inset-0 flex items-center justify-center z-10">
