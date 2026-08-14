@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -32,9 +33,10 @@ export default function App() {
   };
 
   return (
-    <UserProvider>
-      <Router>
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-red-600 selection:text-white">
+    <ThemeProvider>
+      <UserProvider>
+        <Router>
+          <div className="min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
           <Navbar 
             searchQuery={searchQuery} 
             setSearchQuery={setSearchQuery} 
@@ -65,10 +67,6 @@ export default function App() {
                 path="/favorites" 
                 element={<Favorites favorites={favorites} toggleFavorite={toggleFavorite} />} 
               />
-              <Route path="/scripts" element={<Scripts />} />
-              <Route path="/planner" element={<Planner />} />
-              <Route path="/exclusives" element={<Exclusives favorites={favorites} toggleFavorite={toggleFavorite} />} />
-              <Route path="/cart" element={<Cart />} />
               <Route path="/login" element={<Login />} />
             </Routes>
           </div>
@@ -76,5 +74,6 @@ export default function App() {
         </div>
       </Router>
     </UserProvider>
+  </ThemeProvider>
   );
 }

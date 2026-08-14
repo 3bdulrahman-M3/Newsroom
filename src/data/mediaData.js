@@ -222,7 +222,7 @@ export const UPCOMING_EVENTS = [
     time: '20:00 GMT',
     location: 'MetLife Stadium, New Jersey',
     coverageStatus: 'Live Feed Scheduled',
-    rights: 'Cleared for Subscribers'
+    rights: 'Cleared for Broadcast'
   },
   {
     id: 202,

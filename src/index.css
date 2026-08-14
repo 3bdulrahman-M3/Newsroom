@@ -1,18 +1,51 @@
 @import "tailwindcss";
 
+/* Global Border Radius Enforcement: 8px across the entire site */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-lg, .rounded-md {
+  border-radius: 8px !important;
+}
+
 header, footer {
   border-radius: 0px !important;
 }
 
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+/* Global Light Theme Typography & Palette */
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Bebas Neue', cursive;
+  --font-mono: 'JetBrains Mono', monospace;
+  --bg-main: #ffffff;
+  --text-main: #0f172a;
+  --accent-red: #dc2626;
 }
 
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 25s linear infinite;
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Typography styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
 }
 
 /* Hide scrollbars */
@@ -22,17 +55,4 @@ header, footer {
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #020617;
-  color: #f8fafc;
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
 }

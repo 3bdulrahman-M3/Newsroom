@@ -2,167 +2,104 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { 
-  Search, LayoutDashboard, MonitorPlay, Heart, ShoppingBag, 
-  Globe, Bell, Shield, Sparkles, FileText, CalendarDays, Receipt, UserCheck
+  Search, LayoutDashboard, MonitorPlay, Bell, LogIn, LogOut
 } from 'lucide-react';
 
-export default function Navbar({ searchQuery, setSearchQuery, favoritesCount }) {
+export default function Navbar({ searchQuery, setSearchQuery }) {
   const location = useLocation();
-  const { userRole, setUserRole, language, setLanguage, cart, isSubscriber, notifications } = useUser();
+  const { user, isLoggedIn, logoutUser, notifications } = useUser();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+
   const unreadNotifs = notifications.filter((n) => !n.read).length;
 
-  const t = {
-    overview: language === 'ar' ? 'الرئيسية' : 'Overview',
-    library: language === 'ar' ? 'مكتبة الوسائط' : 'Media Library',
-    scripts: language === 'ar' ? 'الأخبار والسكريبتات' : 'Scripts',
-    planner: language === 'ar' ? 'جدول التغطيات' : 'Planner',
-    favorites: language === 'ar' ? 'المفضلة' : 'Favorites',
-    subscriber: language === 'ar' ? 'حساب مشترك' : 'Subscriber',
-    adhoc: language === 'ar' ? 'مشتري فردي' : 'Ad-hoc Buyer'
-  };
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-[200] bg-slate-900 border-b border-slate-800 text-slate-100 px-6 py-2.5 flex items-center justify-between shadow-md">
+    <header className="fixed top-0 left-0 right-0 z-[200] bg-white border-b border-slate-200 text-slate-900 px-6 py-3 flex items-center justify-between shadow-xs">
       {/* Brand & Left Navigation */}
-      <div className="flex items-center gap-6">
-        <Link to="/" className="flex items-center gap-2.5 decoration-none">
+      <div className="flex items-center gap-8">
+        <Link to="/" className="flex items-center no-underline">
+          <img src="/logo.png" alt="REDWIRE Logo" className="h-12 w-auto object-contain" />
           <div>
-            <span className="font-['Bebas_Neue'] text-2xl tracking-wider text-white leading-none block">
-              RED<span className="text-red-500">WIRE</span>
+            <span className="font-['Montserrat'] text-xl font-extrabold tracking-tight text-slate-900 leading-none block">
+              RED<span className="text-red-600">WIRE</span>
             </span>
-            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest block -mt-1">
-              Client Portal
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest block -mt-1 font-mono">
+              Media Distribution Wire
             </span>
           </div>
         </Link>
 
-        {/* Primary Dashboard Links */}
-        <nav className="hidden lg:flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+        {/* Primary Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-200">
           <Link
             to="/"
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               location.pathname === '/'
-                ? 'bg-slate-700 text-white shadow-xs'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
-            <LayoutDashboard size={14} className={location.pathname === '/' ? 'text-red-500' : ''} />
-            {t.overview}
+            <LayoutDashboard size={15} className={location.pathname === '/' ? 'text-white' : 'text-slate-500'} />
+            Overview
           </Link>
           <Link
             to="/feed"
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               location.pathname === '/feed'
-                ? 'bg-slate-700 text-white shadow-xs'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
-            <MonitorPlay size={14} className={location.pathname === '/feed' ? 'text-red-500' : ''} />
-            {t.library}
-          </Link>
-          <Link
-            to="/scripts"
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              location.pathname === '/scripts'
-                ? 'bg-slate-700 text-white shadow-xs'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <FileText size={14} className={location.pathname === '/scripts' ? 'text-red-500' : ''} />
-            {t.scripts}
-          </Link>
-          <Link
-            to="/planner"
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              location.pathname === '/planner'
-                ? 'bg-slate-700 text-white shadow-xs'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <CalendarDays size={14} className={location.pathname === '/planner' ? 'text-red-500' : ''} />
-            {t.planner}
+            <MonitorPlay size={15} className={location.pathname === '/feed' ? 'text-white' : 'text-slate-500'} />
+            Media Library
           </Link>
         </nav>
       </div>
 
-      {/* Global Search */}
+      {/* Global Search Bar */}
       <div className="hidden xl:flex items-center flex-1 max-w-sm mx-6">
-        <div className="w-full flex items-center bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-1.5">
-          <Search size={14} className="text-slate-400 mr-2 shrink-0" />
+        <div className="w-full flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 focus-within:ring-2 focus-within:ring-red-500/20 focus-within:bg-white focus-within:border-slate-300 transition-all shadow-xs">
+          <Search size={15} className="text-slate-400 mr-2.5 shrink-0" />
           <input
             type="text"
-            placeholder={language === 'ar' ? 'بحث شامل، وسائط، رياضة...' : 'Search media, sports, keywords...'}
+            placeholder="Search media, sports, tags..."
             value={searchQuery || ''}
             onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none text-xs font-medium text-white placeholder-slate-400 w-full"
+            className="bg-transparent border-none outline-none text-xs font-semibold text-slate-900 placeholder-slate-400 w-full"
           />
         </div>
       </div>
 
-      {/* User Role Switcher, Cart, Lang & Notifications */}
+      {/* Right Controls */}
       <div className="flex items-center gap-3">
-        {/* Role Toggle Button (Simulator) */}
-        <button
-          onClick={() => setUserRole(isSubscriber ? 'adhoc' : 'subscriber')}
-          className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
-            isSubscriber
-              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60'
-              : 'bg-amber-950/80 text-amber-300 border-amber-700/60'
-          }`}
-          title="Switch User Experience Simulator"
-        >
-          <UserCheck size={13} />
-          {isSubscriber ? t.subscriber : t.adhoc}
-        </button>
 
+        {/* User Account & Direct Sign Out Button */}
+        {isLoggedIn && user ? (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-slate-50 text-slate-900 p-1 pr-3 rounded-xl border border-slate-200">
+              <div className="w-7 h-7 !rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
+                {user.avatar || 'US'}
+              </div>
+              <span className="text-xs font-bold hidden sm:inline text-slate-900">{user.name}</span>
+            </div>
 
-        {/* Cart Link (for Ad-hoc buyers) */}
-        {!isSubscriber && (
+            <button
+              onClick={logoutUser}
+              className="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all shadow-xs cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut size={14} />
+              <span className="hidden md:inline">Sign Out</span>
+            </button>
+          </div>
+        ) : (
           <Link
-            to="/cart"
-            className="relative flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700"
+            to="/login"
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-2xl transition-all shadow-md shadow-red-600/20"
           >
-            <ShoppingBag size={14} className="text-amber-400" />
-            {cart.length > 0 && (
-              <span className="bg-amber-500 text-slate-950 text-[10px] px-1.5 py-0.2 rounded-full font-black">
-                {cart.length}
-              </span>
-            )}
+            <LogIn size={15} /> Sign In
           </Link>
         )}
-
-
-        {/* Notifications Popover */}
-        <div className="relative">
-          <button
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 relative transition-colors cursor-pointer"
-          >
-            <Bell size={15} />
-            {unreadNotifs > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-ping" />
-            )}
-          </button>
-
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-4 z-50 flex flex-col gap-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span className="text-xs font-bold text-white">Notifications</span>
-                <span className="text-[10px] text-slate-400">{unreadNotifs} unread</span>
-              </div>
-              <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
-                {notifications.map((n) => (
-                  <div key={n.id} className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50 text-xs">
-                    <div className="font-bold text-white mb-0.5">{language === 'ar' ? n.titleAr : n.title}</div>
-                    <div className="text-[11px] text-slate-400 leading-tight">{n.message}</div>
-                    <div className="text-[9px] text-slate-500 mt-1 font-mono">{n.time}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </header>
   );
